@@ -1,0 +1,38 @@
+---
+title: "Part 1: R Kickoff"
+author:
+  - name: Marco Sciaini
+    url: https://kaldera.dev
+output:
+  distill::distill_article:
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, 
+                      fig.width = 10, fig.height = 6, fig.retina = 2,
+                      dev = "ragg_png", res = 1000)
+```
+
+## Kickoff
+
+### Setup
+
+### Kurs Material
+
+* Downloaded das [Repository](https://github.com/z3tt/hands-on-ggplot2-training).
+
+![]("img/Screenshot 2022-03-06 at 14.13.53.png")
+
+* Öffnet das R Project: `codes/handson.Rproj`
+
+
+
+* Öffnet das erste Skript: `01-part1.R`
+
+![](https://raw.githubusercontent.com/z3tt/hands-on-ggplot2/main/slides/img/setup/rstudio-file.png)
+
+* Run code locally
+
+![](https://raw.githubusercontent.com/z3tt/hands-on-ggplot2/main/slides/img/setup/run-code.png)
+
