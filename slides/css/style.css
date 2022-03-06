@@ -38,13 +38,13 @@ h4 {
 }
 a, a > code {
   font-family: 'Roboto Mono', monospace;
-  color: #28a87d;
+  color: #db7850;
   font-size: 15pt;
   font-weight: 400;
   text-decoration: none;
 }
 a:link, a:visited {
-  color: #28a87d;
+  color: #db7850;
 }
 code.r{
   font-size: 13.5pt;
@@ -164,7 +164,7 @@ pre {
 }
 .remark-code, .remark-inline-code {
   font-family: 'Roboto Mono', monospace;
-  color: #28a87d;
+  color: #db7850;
   font-weight: 400;
 }
 .remark-code-line-highlighted     {
@@ -183,7 +183,7 @@ pre {
 }
 .remark-slide-number .progress-bar {
   height: 100%;
-  background-color: #28a87d;
+  background-color: #db7850;
 }
 .remark-slide table thead th { border-bottom: 1px solid #ddd; }
 th, td { padding: 5px; }

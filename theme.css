@@ -23,7 +23,7 @@ html {
   --aside-size:      12px;
   --fig-cap-size:    13px;
   /*-- Main font colors --*/
-  --title-color:     #28A87D;
+  --title-color:     #db7850;
   --header-color:    rgba(0, 0, 0, 0.8);
   --body-color:      rgba(0, 0, 0, 0.8);
   --aside-color:     rgba(0, 0, 0, 0.6);
@@ -64,15 +64,15 @@ d-appendix {
   --title-size:       16px;
   --text-size:        16px;
   --text-color:       rgba(255, 255, 255, 1);
-  --hover-color:      #114936;
-  --bkgd-color:       #28A87D;
+  --hover-color:      #ec4604;
+  --bkgd-color:       #db7850;
 }
 
 .distill-site-footer {
   --text-color:       rgba(255, 255, 255, 0.8);
   --text-size:        11px;
   --hover-color:      white;
-  --bkgd-color:       #28A87D;
+  --bkgd-color:       #db7850;
 }
 
 /*-- Additional custom styles --*/

@@ -70,6 +70,7 @@ options(width = 80)
 
 ## Marco Sciaini
 <br>
+
 + Freelancer im Bereich Geodatenverarbeitung/Visualisierung
 
 <img src = "img/logo.png"  , style = "position:absolute; top: 16%; left: 73%; width: 10%"></img>
@@ -80,16 +81,17 @@ options(width = 80)
 
 <img src = "img/db_logo.svg"  , style = "position:absolute; top: 35%; left: 85%; width: 8%"></img>
 
--- 
+--
 
 + Landschaftsökologe
 + \> 10 Jahre Erfahrung mit R und räumlichen Daten
 + mehrere R Pakete auf CRAN
 
-[`r fontawesome::fa("twitter")` @shinysci](http://twitter.com/shinysci)  
-[`r fontawesome::fa("github")` @marcosci](http://github.com/marcosci)  
-[`r fontawesome::fa("link")` kaldera.dev](https://kaldera.dev)  
-[`r fontawesome::fa("paper-plane")` marco@kaldera.dev](mailto:marco@kaldera.dev)
+<br><br>
+- [`r fontawesome::fa("twitter")` @shinysci](http://twitter.com/shinysci)  
+- [`r fontawesome::fa("github")` @marcosci](http://github.com/marcosci)  
+- [`r fontawesome::fa("link")` kaldera.dev](https://kaldera.dev)
+- [`r fontawesome::fa("paper-plane")` marco@kaldera.dev](mailto:marco@kaldera.dev)
 
 <img src = "img/packages.png", width =  30%, style = "position:absolute; top: 58%; left: 65%;"></img>
 
@@ -101,15 +103,7 @@ options(width = 80)
 ## Unser Kurs
 + Tag 1:
   + Part 1: Einführung in R und RStudio
-  + Part 2: Räumliche Datenverarbeitung mit R
-
-+ Tag 2:
-  + Part 1: Einführung in R und RStudio
-  + Part 2: Räumliche Datenverarbeitung mit R
-  
-+ Tag 3:
-  + Part 1: Einführung in R und RStudio
-  + Part 2: Räumliche Datenverarbeitung mit R
+     + ** R Kickoff**
 
 ---
 ### Sneak Peak #1

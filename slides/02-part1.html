@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Räumliche Daten und R – Part 1 – Marco Sciaini</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marco Sciaini" />
+    <meta name="date" content="2022-03-06" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center
+background-size: contain
+
+
+
+&lt;br&gt;&lt;br&gt;
+#  Räumliche Analysen mit &lt;code style='color:#ebc500;'&gt;R&lt;/code&gt;&lt;br&gt;&lt;b style='font-size:25pt;color:#a7a7a7;'&gt;Part 1: Einführung in Progammieren mit R&lt;/b&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+#### Marco Sciaini&lt;b style='color:#ccba56;font-weight:400;line-height:150%;'&gt;&lt;br&gt;Landesamt für Bergbau, Energie und Geologie&lt;br&gt;07. März, 2022&lt;/b&gt;&lt;br&gt;
+&lt;img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"&gt;&lt;/img&gt;
+
+---
+## Unser Kurs
++ Tag 1:
+  + Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + **Einführung in Progammieren mit R**
+
+---
+# R Vokabular
+
+- **Funktion**: `function(do_something)`
+
+
+```r
+library(terra)
+rast(data/dem.tif)
+```
+
+---
+# R Vokabular
+
+- **Zuweisung**: `variable &lt;- function(do_something)`
+
+
+```r
+library(terra)
+dem &lt;- rast(data/dem.tif)
+```
+
+---
+# R Vokabular
+
+- **Subsetting**: Auswahl einer Stichprobe aus den Daten über einen Index
+
+
+```r
+dem[30:40, 30:40]
+```
+
+&gt; Index: Zahl, die das Subsetting spezifiziert, startet in R bei 1 (bei anderen Programmiersprachen ist die 0 üblich)
+
+---
+# Datentypen in R
+
+.pull-left[
+
+```r
+numbers &lt;- c(1, 0, 1)
+class(numbers)
+## [1] "numeric"
+numbers
+## [1] 1 0 1
+```
+
+
+```r
+characters &lt;- c('1', '0', "1")
+class(characters)
+## [1] "character"
+characters
+## [1] "1" "0" "1"
+```
+]
+-- 
+.pull-right[
+
+```r
+factors &lt;- as.factor(c(1, 0, 1))
+class(factors)
+## [1] "factor"
+factors
+## [1] 1 0 1
+## Levels: 0 1
+```
+
+
+```r
+logicals &lt;- c(TRUE, FALSE, TRUE)
+class(logicals)
+## [1] "logical"
+logicals
+## [1]  TRUE FALSE  TRUE
+```
+]
+
+---
+# Datenstrukturen in R
+
+--
+
+&lt;img src = "img/Screenshot 2022-03-05 at 15.19.54.png"  , style = "position:absolute; top: -3%, left: 24%; width: 85%"&gt;&lt;/img&gt;
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 16.06.24.png" width="2072" align:center; style="display: block; margin: auto;" /&gt;
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 15.32.42.png" width="596" align:center; style="display: block; margin: auto;" /&gt;
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 16.06.12.png" width="683" align:center; style="display: block; margin: auto;" /&gt;
+
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 16.06.12.png" width="683" align:center; style="display: block; margin: auto;" /&gt;
+
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 16.08.20.png" width="724" align:center; style="display: block; margin: auto;" /&gt;
+
+---
+
+&lt;img src="img/Screenshot 2022-03-05 at 16.08.34.png" width="756" align:center; style="display: block; margin: auto;" /&gt;
+
+---
+# Datentypen und -strukturen in R
+
+## Vektoren
+
+.pull-left[
+
+```r
+dbl_var &lt;- c(1, 2.5, 4.5)
+dbl_var &lt;- c(1L, 6L, 10L)
+lgl_var &lt;- c(TRUE, FALSE)
+chr_var &lt;- c("these are", "some strings")
+```
+]
+
+.pull-right[
+&lt;img src="img/Screenshot 2022-03-05 at 16.20.51.png" width="376" align:center; style="display: block; margin: auto;" /&gt;
+]
+
+---
+# Datentypen und -strukturen in R
+
+## Listen
+
+
+```r
+our_first_list &lt;- list(dbl_var = c(1, 2.5, 4.5),
+                       dbl_var = c(1L, 6L, 10L),
+                       lgl_var = c(TRUE, FALSE),
+                       chr_var = c("these are", "some strings"))
+
+our_first_list
+## $dbl_var
+## [1] 1.0 2.5 4.5
+## 
+## $dbl_var
+## [1]  1  6 10
+## 
+## $lgl_var
+## [1]  TRUE FALSE
+## 
+## $chr_var
+## [1] "these are"    "some strings"
+```
+
+---
+# Datentypen und -strukturen in R
+
+## Dataframes / tibbles
+
+.pull-left[
+### Dataframe
+
+```r
+mtcars
+##                      mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+## Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+## Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+## Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
+## Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
+## Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+## Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+## Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+## Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+## Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+## Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+## Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+## Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+## Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
+## Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
+## Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
+## Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
+## Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+## AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+## Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+## Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+## Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
+## Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
+## Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+## Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+## Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+## Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+## Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2
+```
+]
+
+.pull-right[
+### tibble
+
+```r
+tibble(mtcars)
+## # A tibble: 32 × 11
+##      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
+##  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+##  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+##  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+##  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+##  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+##  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+##  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+##  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+## 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+## # … with 22 more rows
+```
+]
+
+
+---
+# Datentypen und -strukturen in R
+
+## Dataframes / tibbles
+
+&lt;img src="img/Screenshot 2022-03-05 at 17.00.00.png" width="1192" align:center; style="display: block; margin: auto;" /&gt;
+
+---
+# Style Guide
+
+&lt;img src="img/Screenshot 2022-03-05 at 17.03.51.png" width="567" align:center; style="display: block; margin: auto;" /&gt;
+
+&gt; “Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread.” (Hadley Wickham)
+
+---
+# Style Guide
+
+.pull-left[
+
+```r
+# Gut
+fit_models.R
+utility_functions.R
+
+# Schlecht
+fit models.R
+foo.r
+stuff.r
+```
+]
+
+--
+
+.pull-right[
+
+```r
+# Gut
+day_one
+day_1
+
+# Schlecht
+DayOne
+dayone
+```
+]
+
+
+---
+# Style Guide
+
+.pull-left[
+
+```r
+# Gut
+x[, 1]
+
+# Schlecht
+x[,1]
+x[ ,1]
+x[ , 1]
+```
+]
+
+--
+
+.pull-right[
+
+```r
+# Gut
+mean(x, na.rm = TRUE)
+
+# Schlecht
+mean (x, na.rm = TRUE)
+mean( x, na.rm = TRUE )
+```
+]
+
+---
+# Pipe `%&gt;%`
+
+* `magrittr` Paket
+* verhindert das Verschachteln von Funktionen
+  * Lesefluss von Links nach Rechts
+* vermindert das Zwischenspeichern von Objekten
+* Plug &amp; Play von zusätzlichen Schritten
+
+--
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+- `x %&gt;%` f ist äquivalent zu `f(x)`
+- `x %&gt;% f(y)` ist äquivalent zu `f(x, y)`
+- `x %&gt;% f %&gt;% g %&gt;% h` ist äquivalent zu `h(g(f(x)))`
+
+---
+# Pipe `%&gt;%`
+
+### Real World Beispiel
+
+.pull-left[
+
+```r
+the_data &lt;- read.csv("path_to_data.csv") %&gt;% 
+  filter(variable_a &gt; x) %&gt;% 
+  head(100)
+```
+]
+
+.pull-right[
+
+```r
+the_data &lt;- read.csv("path_to_data.csv") %&gt;% 
+  filter(variable_a &gt; x) %&gt;% 
+*  filter(!is.na(variable_c)) %&gt;% 
+  head(100)
+```
+]
+
+---
+# Hands-on #2
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&gt; &lt;large&gt;.large[/handson/hands_on_intro]&lt;/large&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

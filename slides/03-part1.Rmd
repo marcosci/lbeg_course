@@ -48,27 +48,18 @@ options(width = 80)
 ```
 
 <br><br>
-#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 1: Einführung in R</b>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 1: Kontrollstrukturen</b>
 <br><br><br><br><br><br><br>
 #### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
 <img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
 
 ---
 ## Unser Kurs
-+ Tag 1:
-  + Part 1: Einführung in R und RStudio
+Part 1: Einführung in R und RStudio
      + R Kickoff
      + Einführung in Progammieren mit R
-     + **Datenverarbeitung in R**
-  + Part 2: Räumliche Datenverarbeitung mit R
-
-+ Tag 2:
-  + Part 1: Einführung in R und RStudio
-  + Part 2: Räumliche Datenverarbeitung mit R
-  
-+ Tag 3:
-  + Part 1: Einführung in R und RStudio
-  + Part 2: Räumliche Datenverarbeitung mit R
+     + Datenverarbeitung in R
+     + **Kontrollstrukturen**
 
 ---
 class: center
