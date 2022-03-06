@@ -1,0 +1,86 @@
+---
+title: "Räumliche Daten und R – Part 2 – Marco Sciaini"
+author: "Marco Sciaini"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: ["./css/style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      slideNumberFormat:  |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>
+      ratio: '16:9'
+---
+class: center
+background-size: contain
+
+```{r options, include = FALSE, purl=FALSE}
+library(tidyverse)
+library(sf)
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
+
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  message = FALSE, 
+  collapse = TRUE,
+  fig.height=6.3,
+  fig.align = 'center',
+  fig.retina = 3,
+  dev = "ragg_png", 
+  res = 1000
+)
+
+Sys.setlocale("LC_TIME", "C")
+
+options(width = 80)
+```
+
+<br><br>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 2: Geometrische Operationen mit Vektoren</b>
+<br><br><br><br><br><br><br>
+#### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
+<img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
+
+---
+## Unser Kurs
+Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + Einführung in Progammieren mit R
+     + Datenverarbeitung in R
+     + Kontrollstrukturen
+
++ Part 2: Einführung in räumliche Daten und R
+  + Erste räumliche Gehversuche
+  + **Geometrische Operationen mit Vektoren**
+
+---
+# Geometrische Operationen mit Vektoren
+
+#### Wir haben uns bisher angeschaut:
+- wie räumliche Daten aufgebaut sind (z.B. `sfg`, `sfc`, `sf`)
+- wie wir mit den nicht räumlichen Attributen arbeiten
+
+```{r echo=FALSE, out.extra='align:center;', fig.retina=3.2}
+knitr::include_graphics("img/sf_ah.png")
+```
+
+---
+# Simplifizieren
+```{r}
+seine_simp = st_simplify(county, dTolerance = 2000)  # 2000 m
+```
+
+
