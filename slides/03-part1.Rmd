@@ -55,7 +55,8 @@ options(width = 80)
 
 ---
 ## Unser Kurs
-Part 1: Einführung in R und RStudio
+
++ Part 1: Einführung in R und RStudio
      + R Kickoff
      + Einführung in Progammieren mit R
      + Datenverarbeitung in R

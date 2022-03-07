@@ -299,4 +299,4 @@ write_sf(seismic, "data/seismic.shp")
 # Hands-on #4
 
 <br><br><br><br><br>
-> <large>.large[/handson/hands_on_intro]</large>
+> <large>.large[/handson/hands_on_sf]</large>
