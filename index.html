@@ -2483,9 +2483,9 @@ Handson
 <li><p>Eine aktuelle <strong>R</strong> Version (<a href="https://cloud.r-project.org/">hier downloaden</a>) und <strong>RStudio</strong>, (<a href="https://rstudio.com/products/rstudio/download/#download">hier downloaden</a>)</p></li>
 <li><p>Die folgenden R Pakete:</p>
 <ul>
-<li><a href="https://www.tidyverse.org/"><code>tidyverse</code></a></li>
-<li><a href="https://docs.ropensci.org/rnaturalearth/"><code>rnaturalearth</code></a></li>
-<li><a href="https://r-spatial.github.io/sf/"><code>sf</code></a></li>
+<li>tidyverse</li>
+<li>rnaturalearth</li>
+<li>sf</li>
 <li>terra</li>
 <li>stars</li>
 <li>pool</li>
@@ -2493,7 +2493,6 @@ Handson
 <li>tmap</li>
 <li>gstat</li>
 <li>future</li>
-<li>RSAGA</li>
 <li>qgisprocess</li>
 <li>rgrass7</li>
 <li>spData</li>
@@ -2505,33 +2504,13 @@ Handson
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Package names</span>
-<span class='va'>packages</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"tidyverse"</span>, <span class='st'>"cowplot"</span>, <span class='st'>"ggforce"</span>, <span class='st'>"ggrepel"</span>, <span class='st'>"ggtext"</span>, <span class='st'>"magick"</span>, <span class='st'>"patchwork"</span>, <span class='st'>"ragg"</span>, <span class='st'>"rnaturalearth"</span>, <span class='st'>"sf"</span><span class='op'>)</span>
+<span class='va'>packages</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"tidyverse"</span>, <span class='st'>"rnaturalearth"</span>, <span class='st'>"sf"</span>, <span class='st'>"terra"</span>, <span class='st'>"stars"</span>, <span class='st'>"pool"</span>, <span class='st'>"mapview"</span>, <span class='st'>"tmap"</span>, <span class='st'>"gstat"</span>, <span class='st'>"qgisprocess"</span>, <span class='st'>"rgrass7"</span>, <span class='st'>"spDataLarge"</span>, <span class='st'>"repurrrsive"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>packages</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <p>Um den Code auszuführen, öffne Rstudio, füge den Code per Copy-Paste in das <strong>Konsolenfenster</strong> ein und drücke die Eingabetaste. Es sollten mehrere Meldungen angezeigt werden. Überprüfe diese Meldungen auf Fehler und behebe sie, falls erforderlich. Warnungen und andere Informationsmeldungen können ignoriert werden. Falls dabei Fehler auftreten, die nicht gelöst werden können, haben wir an Tag 1 Zeit dafür alles zu lösen.</p>
 <hr />
-<h1 id="prerequisites-and-preparation">Prerequisites and Preparation</h1>
-<ul>
-<li><strong>Familiarity with Rstudio</strong> <em>(required)</em><br><br>Suggested Material:
-<ul>
-<li>Book: <a href="https://learning.oreilly.com/library/view/r-for-data/9781491910382/">Chapter 1 of “R for Data Science”</a> by Hadley Wickham &amp; Garrett Grolemund</li>
-<li>Video: <a href="https://learning.oreilly.com/videos/r-programming-for/9781789950298/">Chapter 2 of “R Programming for Statistics and Data Science”</a> by 365 Careers</li>
-</ul></li>
-<li><strong>Basic Knowledge of R</strong> <em>(helpful but not required)</em><br><br>Suggested Material:
-<ul>
-<li>Book: <a href="https://learning.oreilly.com/library/view/r-for-data/9781491910382/">Chapter 4–6 of “R for Data Science”</a> by Hadley Wickham &amp; Garrett Grolemund</li>
-<li>Book: <a href="https://learning.oreilly.com/library/view/r-for-everyone/9780134546988/">Chapter 1–3 “R for Everyone: Advanced Analytics and Graphics, 2nd Edition”</a> by Jared Lander</li>
-<li>Book: <a href="https://learning.oreilly.com/library/view/programming-skills-for/9780135159071/">Section 1 and 3 “Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R”</a> by Joel Ross &amp; Michael Freeman</li>
-<li>Video: <a href="https://learning.oreilly.com/videos/r-programming-for/9781789950298/">Chapters 3, 4, and 7 of “R Programming for Statistics and Data Science”</a> by 365 Careers</li>
-</ul></li>
-<li><strong>Data Wrangling with the tidyverse</strong> <em>(helpful but not required)</em><br><br>Suggested Material:
-<ul>
-<li>Book: <a href="https://learning.oreilly.com/library/view/r-for-data/9781491910382/">Chapter 9–16 (Section: Wrangle) of “R for Data Science”</a> by Hadley Wickham &amp; Garrett Grolemund</li>
-<li>Scenario: <a href="https://www.oreilly.com/scenarios/format-and-shape/9781492079064/">“Format and Shape Your Data in R with the Tidyverse”</a> by Martin Frigaard</li>
-</ul></li>
-</ul>
 <h2 class="appendix" id="reuse">Reuse</h2>
 <p><i>Text and figures are licensed under Creative Commons Attribution <a href='https://creativecommons.org/licenses/by/4.0/'>CC BY 4.0</a>.<br>Note that figures in slides may be pulled in from external sources and may be licensed under different terms.</i></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>

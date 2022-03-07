@@ -1,0 +1,74 @@
+---
+title: "Räumliche Daten und R – Part 2 – Marco Sciaini"
+author: "Marco Sciaini"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: ["./css/style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      slideNumberFormat:  |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>
+      ratio: '16:9'
+---
+class: center
+background-size: contain
+
+```{r options, include = FALSE, purl=FALSE}
+library(tidyverse)
+library(sf)
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
+
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  message = FALSE, 
+  collapse = TRUE,
+  fig.height=6.3,
+  fig.align = 'center',
+  fig.retina = 3,
+  dev = "ragg_png", 
+  res = 1000
+)
+
+Sys.setlocale("LC_TIME", "C")
+
+options(width = 80)
+```
+
+<br><br>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 2: Geometrische Operationen mit Vektoren</b>
+<br><br><br><br><br><br><br>
+#### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
+<img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
+
+---
+
+# Prerequisites and Preparation
+
+- **Familiarity with Rstudio** *(required)*<br><br>Suggested Material:
+  * Book: [Chapter 1 of “R for Data Science”](https://learning.oreilly.com/library/view/r-for-data/9781491910382/) by Hadley Wickham & Garrett Grolemund
+  * Video: [Chapter 2 of “R Programming for Statistics and Data Science”](https://learning.oreilly.com/videos/r-programming-for/9781789950298/) by 365 Careers 
+    
+- **Basic Knowledge of R** *(helpful but not required)*<br><br>Suggested Material:
+  * Book: [Chapter 4–6 of “R for Data Science”](https://learning.oreilly.com/library/view/r-for-data/9781491910382/) by Hadley Wickham & Garrett Grolemund
+  * Book: [Chapter 1–3 “R for Everyone: Advanced Analytics and Graphics, 2nd Edition”](https://learning.oreilly.com/library/view/r-for-everyone/9780134546988/) by Jared Lander 
+  * Book: [Section 1 and 3 “Programming Skills for Data Science: Start Writing Code to Wrangle, Analyze, and Visualize Data with R”](https://learning.oreilly.com/library/view/programming-skills-for/9780135159071/) by Joel Ross & Michael Freeman
+  * Video: [Chapters 3, 4, and 7 of “R Programming for Statistics and Data Science”](https://learning.oreilly.com/videos/r-programming-for/9781789950298/) by 365 Careers 
+
+    
+- **Data Wrangling with the tidyverse** *(helpful but not required)*<br><br>Suggested Material:
+  * Book: [Chapter 9–16 (Section: Wrangle) of “R for Data Science”](https://learning.oreilly.com/library/view/r-for-data/9781491910382/) by Hadley Wickham &  Garrett Grolemund
+  * Scenario: [“Format and Shape Your Data in R with the Tidyverse”](https://www.oreilly.com/scenarios/format-and-shape/9781492079064/) by Martin Frigaard 

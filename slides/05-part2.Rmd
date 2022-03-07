@@ -74,13 +74,28 @@ Part 1: Einführung in R und RStudio
 - wie wir mit den nicht räumlichen Attributen arbeiten
 
 ```{r echo=FALSE, out.extra='align:center;', fig.retina=3.2}
-knitr::include_graphics("img/sf_ah.png")
+knitr::include_graphics("img/ah_sf.png")
 ```
 
 ---
-# Simplifizieren
+# Unary Operationen
+## Simplifizieren
 ```{r}
-seine_simp = st_simplify(county, dTolerance = 2000)  # 2000 m
+county <- st_read("data/USA_2_GADM_fips.shp")
+california <- county[county$NAME_1 == "California", ]
+california_simp = st_simplify(california, dTolerance = 20000)
+object.size(st_geometry(california))
+object.size(st_geometry(california_simp))
+```
+
+---
+```{r fig.retina=1}
+par(mfrow=c(1,2))
+plot(st_geometry(california))
+plot(st_geometry(california_simp))
 ```
 
 
+---
+# Unary Operationen
+## Zentroide

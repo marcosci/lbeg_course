@@ -162,7 +162,8 @@ iris %>%
 ]
 
 ---
-```{r eval=FALSE, fig.show="hold", out.width="50%"}
+.pull-left[
+```{r eval=TRUE, fig.show="hold", out.width="50%"}
 iris_sub <- iris[iris$Sepal.Width > 3.4 & iris$Sepal.Length > 2.7,]
 iris_sp1 <- iris_sub[iris_sub$Species == "setosa",]
 iris_sp2 <- iris_sub[iris_sub$Species == "virginica",]
@@ -174,9 +175,10 @@ abline(fit_sp1)
 plot(Sepal.Length ~ Petal.Width, data = iris_sp2)+ 
 abline(fit_sp2)
 ```
+]
 
 .pull-right[
-```{r eval=FALSE, fig.show="hold", out.width="50%"}
+```{r eval=TRUE, fig.show="hold", out.width="50%"}
 library(dplyr)
 library(ggplot2)
 iris %>% 
