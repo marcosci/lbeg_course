@@ -26,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
 knitr::include_graphics("img/Screenshot 2022-03-06 at 14.13.53.png")
 ```
 
-* Öffnet das R Project: `codes/handson.Rproj`
+* Öffnet das R Project: `handson/handson.Rproj`
 
 ```{r echo=FALSE , layout="l-body"}
 knitr::include_graphics("img/Screenshot 2022-03-06 at 19.07.39.png")
