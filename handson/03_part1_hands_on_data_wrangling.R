@@ -9,6 +9,7 @@ library(nycflights13) # enthält den datensatz
 # Der Datensatz beinhaltet alle 336776 Flüge vom Flughafen New York City in 2013 
 # (source:US Bureau of Transportation Statistics )
 
+#as_tibble(flights)
 flights 
 
 # 2. filter() -------------------------------------------------------------
@@ -17,16 +18,22 @@ flights
 
 # Vergleichsoperatoren >, >=,<=, <, != , == , | , &, is.na(), between(), near()
 
-filter(flights, month == 1, day == 1)
+flights %>% 
+  filter(month == 1, 
+         day == 1)
 
 filter(flights, month == 11 | month == 12)
 
 # %in% Operator in R, identifiziert ob Elemente zu einem Vektor gehören
 
+# ==
+# != 
+# %in%
+
 filter(flights, month %in% c(11, 12))
 
 # Filtern von Flügen, die unter 2 stunden delay haben bei Start oder Landung
-filter(flights, !(arr_delay > 120 | dep_delay > 120))
+filter(flights, arr_delay > 120, dep_delay < 120)
 filter(flights, arr_delay <= 120, dep_delay <= 120)
 
 # Filtern zwischen zwei Werten 
@@ -41,7 +48,6 @@ filter(flights, arr_delay > 200, !distance > 100)
 # 3. arrange() ------------------------------------------------------------
 
 # Sortierung von Spalten
-
 # Automatische aufsteigende Sortierung
 arrange(flights, year, month, day)
 
@@ -49,9 +55,9 @@ arrange(flights, year, month, day)
 arrange(flights, desc(arr_delay))
 
 # Missing values werden automatisch ans Ende sortiert
+# data.frame(x = c(5, 2, 6, 11, 700, NA))
 df <- tibble(x = c(5, 2, 6, 11, 700, NA))
 arrange(df, x)
-
 arrange(df, desc(x))
 
 # 4. select() -------------------------------------------------------------
@@ -60,14 +66,13 @@ arrange(df, desc(x))
 select(flights, year, month, day)
 
 # Selektieren von zusammenhängenden Spalten
-select(flights, year:day)
+select(flights, year:dep_delay)
 
 # Spalten deselektieren
 select(flights, -(year:day))
 
 # Umbenennen von Spalten mit select() // neuer name = alter name
 select(flights, tail_num = tailnum)
-
 test <- select(flights, tail_num = tailnum)
 
 # Exkurs: Umbenennen von Spalten mit rename()
@@ -93,6 +98,7 @@ flights_sml <- select(flights,
                       distance, 
                       air_time
 )
+
 # neue Spalten gain und speed mit mutate berechen
 mutate(flights_sml,
        gain = dep_delay - arr_delay,
@@ -114,36 +120,32 @@ summarise(flights,
 )
 
 # Erklärung: na.rm = TRUE 
-
 summarise(flights,
           delay = mean(dep_delay, na.rm = FALSE)
 )
 
 # Sobald ein missing value im input ist wird auch der output zum missing value. 
 # Alle Funktionen haben ein na.rm Argument welches missing values vor der Berechnung entfernt.
+dep_deley_single_day  <- flights %>% 
+                              group_by(year, month, day) %>% 
+                              summarise(delay = mean(dep_delay, na.rm = TRUE))
 
-by_day <- group_by(flights, year, month, day)
-summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
-
+#write.csv(dep_deley_single_day, "test.csv")
 
 # 6.1 Pipe Kombinationen mit dplyr + ggplot -------------------------------
-
 flights %>% 
   group_by(dest) %>% 
   summarise(count = n(),
             dist = mean(distance, na.rm = TRUE),
             delay = mean(arr_delay, na.rm = TRUE)) %>% 
-  filter(delay, count > 20, dest != "HNL") %>% 
+  dplyr::filter(count > 20, dest != "ANC") %>% 
   ggplot(mapping = aes(x = dist, y = delay)) +
-  geom_point(aes(size = count), alpha = 1/3) +
-  geom_smooth(se = FALSE)
+    geom_point(aes(size = count), alpha = 1/3) +
+    geom_smooth(se = FALSE)
 
 mtcars %>% 
   rownames_to_column("type") %>% 
   filter(stringr::str_detect(type, 'Toyota|Mazda') )
-
-
-
 
 # 7. Übungen -----------------------------------------------------------------
 
@@ -168,13 +170,11 @@ mtcars %>%
 #  7.1 Lösungen ----------------------------------------------------------------
 
 # a)
-
 flights %>% 
   filter(arr_time > 2399) %>% 
   count()
 
 # b)
-
 flights %>% 
   select(distance) %>% 
   arrange(distance)
@@ -184,16 +184,15 @@ flights %>%
   arrange(desc(distance))
 
 # c)
-
 flights %>% 
-  select(c("carrier", "tailnum", "origin", "dest"))
+  select(carrier, tailnum, origin, dest)
 
 # alternative
 flights %>% 
   select_if(is.character)
-  
+
 # d)
-mtcars %>% 
+as_tibble(mtcars) %>% 
   mutate(
     km_per_litre = 0.425 * mpg
   )

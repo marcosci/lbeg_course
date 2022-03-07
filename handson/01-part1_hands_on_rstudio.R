@@ -4,16 +4,16 @@
 install.packages("sf")
 install.packages("spData")
 
-# Mit Strg + Enter können Zeilen aus dem Editor
+## Mit Strg + Enter können Zeilen aus dem Editor ----
 # in der Konsole evaluiert werden
 print("Hallo LBEG")
 
-# Bitte das epitools Paket laden
+# Bitte das spData Paket laden
 library(spData)
 data(world)
 
 # Die Hilfe nutzen
-?spData::world
+?world
 ?sf::st_read
 
 # Ein paar Vorschläge, um RStudio kennenzulernen:
@@ -33,7 +33,7 @@ ggplot(mpg, aes(x = displ,
   geom_point() +
   theme_minimal()
 
-# Den Viewer kennenlernen
+# Den Viewer kennenlernen ----
 library(mapview)
 library(sf)
 

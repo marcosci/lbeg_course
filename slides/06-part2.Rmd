@@ -25,6 +25,14 @@ background-size: contain
 ```{r options, include = FALSE, purl=FALSE}
 library(tidyverse)
 library(sf)
+library(scales)
+
+seismic <- st_read("data/seismic.geojson")
+
+seismic <- seismic %>%
+  mutate(ValueRange = factor(ValueRange,
+                             levels = c("< 1","1 - 2","2 - 5","5 - 10","10 - 14")))
+
 hook_source <- knitr::knit_hooks$get('source')
 knitr::knit_hooks$set(source = function(x, options) {
   x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
@@ -99,3 +107,129 @@ plot(st_geometry(california_simp))
 ---
 # Unary Operationen
 ## Zentroide
+
+```{r}
+# Unary Operationen
+## Zentroide
+california_simp_centroid = st_centroid(california_simp)
+plot(california_simp["NAME_1"])
+plot(california_simp_centroid["NAME_1"], add = TRUE) 
+```
+
+
+---
+# Unary Operationen
+## Buffer
+
+```{r, eval = FALSE, fig.width = 5}
+california_simp_buff_5km = st_buffer(california_simp_centroid, dist = 5000)
+california_simp_buff_50km = st_buffer(california_simp_centroid, dist = 50000)
+plot(st_geometry(california_simp_buff_50km), col = alpha("#6d5558", 0.3))
+plot(st_geometry(california_simp_buff_5km), add = TRUE, col = "#b01225")
+```
+---
+# Unary Operationen
+## Buffer
+
+```{r, echo = FALSE, fig.width = 5}
+california_simp_buff_5km = st_buffer(california_simp_centroid, dist = 5000)
+california_simp_buff_50km = st_buffer(california_simp_centroid, dist = 50000)
+plot(st_geometry(california_simp_buff_50km), col = alpha("#6d5558", 0.3))
+plot(st_geometry(california_simp_buff_5km), add = TRUE, col = "#b01225")
+```
+
+---
+## Clipping
+
+```{r}
+b = st_sfc(st_point(c(0, 1)), st_point(c(1, 1))) 
+b = st_buffer(b, dist = 1) 
+plot(b, border = "grey")
+text(x = c(-0.5, 1.5), y = 1, labels = c("x", "y"), cex = 3)
+```
+
+---
+```{r}
+x = b[1]
+y = b[2]
+x_and_y = st_intersection(x, y)
+plot(b, border = "grey")
+plot(x_and_y, col = "lightgrey", border = "grey", add = TRUE)
+```
+
+---
+class: center
+```{r echo=FALSE, layout="l-body"}
+knitr::include_graphics("img/spatial_intersections.png")
+```
+
+
+---
+# Spatial Subsetting
+
+.pull-left[
+```{r echo=FALSE, layout="l-body"}
+knitr::include_graphics("img/spatial-subset.png")
+```
+]
+
+.pull-right[
+```{r echo=FALSE, layout="l-body"}
+bb = st_bbox(st_union(x, y))
+box = st_as_sfc(bb)
+set.seed(2017)
+p = st_sample(x = box, size = 10)
+x_and_y = st_intersection(x, y)
+st_intersection(p, x_and_y)
+```
+]
+
+---
+# Geometry unions
+
+```{r}
+st_union(california) %>% st_geometry %>% plot()
+```
+
+--- 
+# Casting von Geometrietypen
+```{r}
+multipoint = st_multipoint(matrix(c(1, 3, 5, 1, 3, 1), ncol = 2))
+linestring = st_cast(multipoint, "LINESTRING")
+polygon = st_cast(multipoint, "POLYGON")
+par(mfrow = c(1,3))
+plot(multipoint)
+plot(linestring)
+plot(polygon)
+```
+---
+
+# ggplot2
+
+- Zentraler Bestandteil des Tidyverse
+- Explorative Datenanalyse (EDA)
+- Erstellen von Grafiken zur Kommunikation von Resultaten
+- Basierend auf der "Grammar of Graphics" (Wilkinson, 2005)
+
+```{r echo=FALSE}
+knitr::include_graphics("img/Screenshot 2022-03-07 at 18.13.48.png")
+```
+
+---
+```{r echo=FALSE}
+knitr::include_graphics("img/Screenshot 2022-03-07 at 18.14.53.png")
+```
+
+---
+
+```{r}
+ggplot() +
+  geom_sf(data = seismic,
+          aes(fill = ValueRange), 
+          size = 0) +
+  scale_fill_brewer(palette = "Reds",
+                    name = "% chance") +
+  coord_sf(crs = "EPSG:5070",
+           default_crs = "EPSG:4326") +
+  theme_void()
+```

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Räumliche Daten und R – Part 2 – Marco Sciaini</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marco Sciaini" />
+    <meta name="date" content="2022-03-07" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center
+background-size: contain
+
+
+
+&lt;br&gt;&lt;br&gt;
+#  Räumliche Analysen mit &lt;code style='color:#ebc500;'&gt;R&lt;/code&gt;&lt;br&gt;&lt;b style='font-size:25pt;color:#a7a7a7;'&gt;Part 2: Geometrische Operationen mit Rasterdaten&lt;/b&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+#### Marco Sciaini&lt;b style='color:#ccba56;font-weight:400;line-height:150%;'&gt;&lt;br&gt;Landesamt für Bergbau, Energie und Geologie&lt;br&gt;07. März, 2022&lt;/b&gt;&lt;br&gt;
+&lt;img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"&gt;&lt;/img&gt;
+
+---
+## Unser Kurs
++ Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + Einführung in Progammieren mit R
+     + Datenverarbeitung in R
+     + Kontrollstrukturen
+
++ Part 2: Einführung in räumliche Daten und R
+  + Erste räumliche Gehversuche
+  + Geometrische Operationen mit Vektoren
+  + **Geometrische Operationen mit Rasterdaten**
+
+---
+# Geometrische Operationen mit Rasterdaten
+
+&lt;img src="img/raster-intro.png" width="597" style="display: block; margin: auto;" /&gt;
+
+---
+&lt;img src="img/raster-intro2.png" width="597" style="display: block; margin: auto;" /&gt;
+---
+# R Pakete für Rasterdaten
+
+&gt; raster -&gt; terra + stars
+
+.pull-left[
+### terra
+- Eher gedacht für grundlegende Arbeiten mit Rasterdaten
+]
+
+.pull-right[
+### stars
+- Implementiert  raster data cubes 
+  - Damit eher für Cloud Computation gedacht
+]
+
+---
+# `terra`
+
+
+```
+## class       : SpatRaster 
+## dimensions  : 10, 10, 1  (nrow, ncol, nlyr)
+## resolution  : 7, 4  (x, y)
+## extent      : -150, -80, 20, 60  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84
+```
+---
+# `terra`
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-4-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+# `terra`
+
+
+```
+## [1] "SpatRaster"
+## attr(,"package")
+## [1] "terra"
+```
+
+---
+# `terra`
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-6-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster Klassen
+
+```r
+my_rast
+## class       : SpatRaster 
+## dimensions  : 457, 465, 1  (nrow, ncol, nlyr)
+## resolution  : 0.0008333333, 0.0008333333  (x, y)
+## extent      : -113.2396, -112.8521, 37.13208, 37.51292  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source      : srtm.tif 
+## name        : srtm 
+## min value   : 1024 
+## max value   : 2892
+```
+
+---
+# Raster Klassen
+
+```r
+multi_raster_file = system.file("raster/landsat.tif", package = "spDataLarge")
+multi_rast = rast(multi_raster_file)
+multi_rast
+## class       : SpatRaster 
+## dimensions  : 1428, 1128, 4  (nrow, ncol, nlyr)
+## resolution  : 30, 30  (x, y)
+## extent      : 301905, 335745, 4111245, 4154085  (xmin, xmax, ymin, ymax)
+## coord. ref. : WGS 84 / UTM zone 12N (EPSG:32612) 
+## source      : landsat.tif 
+## names       : landsat_1, landsat_2, landsat_3, landsat_4 
+## min values  :      7550,      6404,      5678,      5252 
+## max values  :     19071,     22051,     25780,     31961
+```
+
+```r
+nlyr(multi_rast)
+## [1] 4
+```
+
+
+---
+# Raster Layer
+
+```r
+multi_rast3 = subset(multi_rast, 3)
+multi_rast4 = subset(multi_rast, "landsat_4")
+par(mfrow = c(1,2))
+plot(multi_rast3)
+plot(multi_rast4)
+```
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster Layer
+
+```r
+(recombined_raster &lt;- c(multi_rast3, multi_rast4))
+## class       : SpatRaster 
+## dimensions  : 1428, 1128, 2  (nrow, ncol, nlyr)
+## resolution  : 30, 30  (x, y)
+## extent      : 301905, 335745, 4111245, 4154085  (xmin, xmax, ymin, ymax)
+## coord. ref. : WGS 84 / UTM zone 12N (EPSG:32612) 
+## sources     : landsat.tif  
+##               landsat.tif  
+## names       : landsat_3, landsat_4 
+## min values  :      5678,      5252 
+## max values  :     25780,     31961
+```
+
+---
+# Raster Manipulation
+
+
+```r
+elev = rast(nrows = 6, ncols = 6, resolution = 0.5, 
+            xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
+            vals = 1:36)
+plot(elev)
+```
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+# Raster Subsetting
+.pull-left[
+
+```r
+# Reihe 1, Spalte 1
+elev[1, 1]
+##   lyr.1
+## 1     1
+# Zelle mit ID 1
+elev[1]
+##   lyr.1
+## 1     1
+```
+]
+
+.pull-right[
+
+```r
+elev[1, 1] = 0
+elev[]
+##       lyr.1
+##  [1,]     0
+##  [2,]     2
+##  [3,]     3
+##  [4,]     4
+##  [5,]     5
+##  [6,]     6
+##  [7,]     7
+##  [8,]     8
+##  [9,]     9
+## [10,]    10
+## [11,]    11
+## [12,]    12
+## [13,]    13
+## [14,]    14
+## [15,]    15
+## [16,]    16
+## [17,]    17
+## [18,]    18
+## [19,]    19
+## [20,]    20
+## [21,]    21
+## [22,]    22
+## [23,]    23
+## [24,]    24
+## [25,]    25
+## [26,]    26
+## [27,]    27
+## [28,]    28
+## [29,]    29
+## [30,]    30
+## [31,]    31
+## [32,]    32
+## [33,]    33
+## [34,]    34
+## [35,]    35
+## [36,]    36
+```
+]
+
+---
+# Raster Übersicht
+.pull-left[
+
+```r
+# summary
+summary(my_rast)
+##       srtm     
+##  Min.   :1024  
+##  1st Qu.:1535  
+##  Median :1836  
+##  Mean   :1843  
+##  3rd Qu.:2114  
+##  Max.   :2892
+# sd
+global(my_rast, sd)
+##            sd
+## srtm 416.6776
+```
+]
+
+.pull-right[
+
+```r
+# histogram
+hist(my_rast)
+```
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-16-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+---
+# `Map algebra`
+
+
+```r
+r1 &lt;- elev + elev
+r2 &lt;- elev^2
+r3 &lt;- log(elev)
+r4 &lt;- elev &gt; 5
+```
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-18-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+# Focal / Moving window Funktionen
+
+
+```r
+r_focal = focal(elev, w = matrix(1, nrow = 3, ncol = 3), fun = min)
+```
+
+&lt;img src="img/focal_example.png" width="422" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Zonale Funktionen
+
+&gt; basieren auf zweitem Raster, dass Zonen definiert
+
+.pull-left[
+
+```r
+grain_order = c("clay", "silt", "sand")
+grain_char = sample(grain_order, 36, replace = TRUE)
+grain_fact = factor(grain_char, levels = grain_order)
+grain = rast(nrows = 6, ncols = 6, resolution = 0.5, 
+             xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
+             vals = grain_fact)
+plot(grain)
+```
+
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-21-1.png" width="288" style="display: block; margin: auto;" /&gt;
+]
+
+
+.pull-right[
+
+```r
+r_zonal = zonal(elev, grain, fun = "mean")
+r_zonal
+##   lyr.1    lyr.1
+## 1  clay 19.09091
+## 2  silt 17.13333
+## 3  sand 19.80000
+```
+]
+
+---
+# `Aggregation` und Disaggregation
+
+```r
+dem = rast(system.file("raster/dem.tif", package = "spDataLarge"))
+dem_agg = aggregate(dem, fact = 5, fun = mean)
+```
+
+&lt;img src="img/aggregation.png" width="597" style="display: block; margin: auto;" /&gt;
+
+---
+# Aggregation und `Disaggregation`
+
+```r
+dem_disagg = disagg(dem_agg, fact = 5, method = "bilinear")
+```
+
+&lt;img src="img/disaggregation.png" width="683" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

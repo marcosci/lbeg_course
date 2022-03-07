@@ -3,8 +3,8 @@
 #### 
 
 ### Kurzer Exkurs: Eigene Funktionen ----
-add_ten <- function(input, input2) {
-  output <- input + 10
+minus_ten <- function(input, input2) {
+  output <- input - 10
   return(output)
 }
 
@@ -12,23 +12,32 @@ add_ten(0)
 add_ten(10)
 
 ### For Schleifen Iteration ----
-x <- c(1, 4, 7)
-for(i in seq_along(x)){
-  
-  print(add_ten(x[i]))
+jahr      <- c(1950, 1951, 1952)
+torftiefe <- c(50, 30, 70)
 
+add_ten(x[1])
+add_ten(x[2])
+add_ten(x[3])
+
+torf_results <- c()
+
+for(zeitpunkt in seq_along(jahr)){
+  torf_results[zeitpunkt] <- minus_ten(torftiefe[zeitpunkt])
 }
+
+torf_results
+x
 
 ### purrr Iteration ----
 library(tidyverse)
-map(.x = c(1, 4, 7), 
-    .f = add_ten)
+map_dbl(.x = c(1, 4, 7), 
+        .f = add_ten)
 
 # Glücklicherweise müssen wir nicht alles ausschreiben:
-map(c(1, 4, 7), add_ten)
+map_dbl(c(1, 4, 7), add_ten)
 
 # Egal welche Datenstruktur wir map übergeben, wir bekommen eine Liste zurück:
-map(list(1, 4, 7), add_ten)
+map_dbl(list(1, 4, 7), add_ten)
 map(data.frame(a = 1, b = 4, c = 7), add_ten)
 
 ## purrr erlaubt den Rückgabewert selbst zu bestimmen:
@@ -38,7 +47,7 @@ map_chr(c(1, 4, 7), add_ten) # map to a character
 ## Wir können auch einen tibble mit den alten und neuen Werten erzeugen:
 map_df(c(1, 4, 7), function(x) {
   return(tibble(old_number = x, 
-                    new_number = add_ten(x)))
+                new_number = add_ten(x)))
 })
 
 ## tilde-dot Abkürzung für Funktionen:
