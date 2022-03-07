@@ -48,7 +48,7 @@ options(width = 80)
 ```
 
 <br><br>
-#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 1: Kontrollstrukturen</b>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 1: Datenverarbeitung in R</b>
 <br><br><br><br><br><br><br>
 #### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
 <img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
@@ -59,8 +59,8 @@ options(width = 80)
 + Part 1: Einführung in R und RStudio
      + R Kickoff
      + Einführung in Progammieren mit R
-     + Datenverarbeitung in R
-     + **Kontrollstrukturen**
+     + **Datenverarbeitung in R**
+     + Kontrollstrukturen
 
 ---
 class: center
@@ -253,178 +253,3 @@ data %>% group_by(gender) %>% summarise(average_height = mean(height))
 
 <br><br><br><br><br>
 > <large>.large[/handson/hands_on_data_wrangling]</large>
-
----
-class: center
-# Kontrollstrukturen in R
-
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/Screenshot 2022-03-05 at 19.49.06.png")
-```
-
-
----
-# if-else
-
-- Meist genutzte Kontrollstruktur in allen Programmiersprachen
-- Testet Bedingung auf wahr/falsch, führt jeweiligem zugehörige Anweisung aus
-
-```{r eval=FALSE}
-if(<BEDINGUNG>){
-       # tu etwas
-} else {
-       # tu etwas anderes
-}
-```
-
----
-# for loop (Zählschleife)
-
-.pull-left[
-- Zählt von i bis j
-- Wiederholt dabei jedes Mal den Codeblock
-]
-
-.pull-right[
-```{r}
-j <- 10
-for(i in 1:j){
-  print(i)
-}
-```
-]
-
----
-# while loop (Kopfgesteurte Schleife)
-
-.pull-left[
-- Testet Bedingung bevor Codeblock ausgeführt wird
-- Führt Codeblock so oft aus, solange Bedingung wahr
-> Nur in den seltensten Fällen nutzen, andere Optionen fast immer besser
-
-]
-
-.pull-right[
-```{r}
-j <- 0
-while(j <= 10){
-  print(i)
-  j <- j + 1
-}
-```
-]
-
----
-# Vektorisierter Code
- 
-.pull-left[
-- R ist am performantesten, wenn man vektorisierten Code nutzt
-  - vektorisierter Code führt Operationen auf jedes Element eines Vektors auf
-- Automatisiert Präallokation und hat eigene “working environment”
-]
-
-.pull-right[
-```{r}
-system.time({
-  x <- c()
-  for (i in 1:1e+05) {
-    x <- c(x,i)
-  }
-})
-
-system.time({x <- seq(1, 1e+05)})
-```
-]
-
----
-# `purrr`
-
-R hat die `apply` Familie, die genutzt werden kann um vektorisierte Operationen durchzuführen.
-
-```{r eval=FALSE}
-apply(X, .Margin, function, ...)
-
-lapply(List, function,...)
-
-sapply(List, function,...)
-
-mapply(function,Arguments)
-```
-
---
-
-.large[ ... die wir nicht benutzen werden.]
-
----
-
-Wir nutzen stattdessen `purrr`:
-
-```{r eval=FALSE}
-# Basic map() function returnsresults in a list.
-map(data.list, function, ...)
-# map_lgl() dealing with logical argument returns the outcome in a vector
-map_lgl(data.list, function, ...)
-# map2() dealing with two different sets returns a list
-map2(list1, list2, function,...)
-```
---
-
-Funktionsweise:
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/map.png")
-```
-
----
-
-Wir nutzen stattdessen `purrr`:
-
-```{r eval=FALSE}
-# Basic map() function returnsresults in a list.
-map(data.list, function, ...)
-# map_lgl() dealing with logical argument returns the outcome in a vector
-map_lgl(data.list, function, ...)
-# map2() dealing with two different sets returns a list
-map2(list1, list2, function,...)
-```
-
-Funktionsweise:
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/map-list.png")
-```
-
----
-class: center
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/Screenshot 2022-03-05 at 21.17.46.png")
-```
-
----
-class: center
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/Screenshot 2022-03-05 at 21.18.01.png")
-```
-
----
-class: center
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/Screenshot 2022-03-05 at 21.18.20.png")
-```
-
----
-class: center
-
-```{r echo=FALSE, out.extra='align:center;', fig.retina=3}
-knitr::include_graphics("img/Screenshot 2022-03-05 at 21.18.33.png")
-```
-
----
-# Hands-on #3
-
-<br><br><br><br><br>
-> <large>.large[/handson/hands_on_kontrollstrukturen]</large>
