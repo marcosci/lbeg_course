@@ -1,4 +1,4 @@
-# Tobias
+# Tobias ----
 library(readxl)
 library(dplyr)
 monatlich_A_2004_2011 <- read_excel("~/Downloads/monatlich_A_2004_2011.xlsx")
@@ -9,7 +9,7 @@ monatlich_A_2004_2011 %>%
   pivot_wider(names_from = Curve, values_from = Y) %>% 
   View()
 
-# Robin 
+# Robin ----
 library(sf)
 library(terra)
 library(exactextractr)
@@ -48,3 +48,20 @@ ggplot(bkfifty_poly_union, aes(fill = versiegelung_class)) +
   #scale_fill_viridis_d(option = "E", na.value="transparent") +
   coord_sf(crs = "EPSG:4326") +
   theme_void()
+
+# Jan ----
+library(readxl)
+library(dplyr)
+library(ggplot2)
+verschlämmung <- read_excel("~/Downloads/Marco/Sachdaten_Verschlämmung.xlsx")
+View(verschlämmung)
+names(verschlämmung)
+peine <- st_read("~/Downloads/Marco/BK50_Peine.shp")
+
+peine_verschlämmung <- left_join(peine, verschlämmung, by = c("OBJECTID" = "FL_NR"))
+
+ggplot(peine_verschlämmung, aes(fill = OTIEF)) +
+  geom_sf(size = 0.03) +
+  scale_fill_viridis_c(option = "E", na.value="transparent") +
+  coord_sf(crs = "EPSG:4326") +
+  theme_minimal()
