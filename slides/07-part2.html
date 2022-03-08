@@ -4,7 +4,7 @@
     <title>Räumliche Daten und R – Part 2 – Marco Sciaini</title>
     <meta charset="utf-8" />
     <meta name="author" content="Marco Sciaini" />
-    <meta name="date" content="2022-03-07" />
+    <meta name="date" content="2022-03-08" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
   </head>
@@ -62,7 +62,10 @@ background-size: contain
 # `terra`
 
 
-```
+```r
+library(terra)
+test_raster &lt;- rast(ncol=10, nrow=10, xmin=-150, xmax=-80, ymin=20, ymax=60)
+test_raster
 ## class       : SpatRaster 
 ## dimensions  : 10, 10, 1  (nrow, ncol, nlyr)
 ## resolution  : 7, 4  (x, y)
@@ -78,7 +81,10 @@ background-size: contain
 # `terra`
 
 
-```
+```r
+raster_filepath = system.file("raster/srtm.tif", package = "spDataLarge")
+my_rast = rast(raster_filepath)
+class(my_rast)
 ## [1] "SpatRaster"
 ## attr(,"package")
 ## [1] "terra"
@@ -140,7 +146,7 @@ plot(multi_rast3)
 plot(multi_rast4)
 ```
 
-&lt;img src="07-part2_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-10-1.png" width="720" style="display: block; margin: auto;" /&gt;
 
 ---
 # Raster Layer
@@ -170,7 +176,7 @@ elev = rast(nrows = 6, ncols = 6, resolution = 0.5,
 plot(elev)
 ```
 
-&lt;img src="07-part2_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-12-1.png" width="360" style="display: block; margin: auto;" /&gt;
 
 ---
 # Raster Subsetting
@@ -275,7 +281,7 @@ r3 &lt;- log(elev)
 r4 &lt;- elev &gt; 5
 ```
 
-&lt;img src="07-part2_files/figure-html/unnamed-chunk-18-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="07-part2_files/figure-html/unnamed-chunk-18-1.png" width="1080" style="display: block; margin: auto;" /&gt;
 
 ---
 # Focal / Moving window Funktionen
@@ -315,9 +321,9 @@ plot(grain)
 r_zonal = zonal(elev, grain, fun = "mean")
 r_zonal
 ##   lyr.1    lyr.1
-## 1  clay 19.09091
-## 2  silt 17.13333
-## 3  sand 19.80000
+## 1  clay 17.73684
+## 2  silt 19.80000
+## 3  sand 19.08333
 ```
 ]
 
@@ -339,6 +345,12 @@ dem_disagg = disagg(dem_agg, fact = 5, method = "bilinear")
 ```
 
 &lt;img src="img/disaggregation.png" width="683" style="display: block; margin: auto;" /&gt;
+
+---
+# Hands-on #8
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&gt; &lt;large&gt;.large[/handson/hands_on_terra]&lt;/large&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

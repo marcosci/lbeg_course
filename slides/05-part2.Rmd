@@ -56,7 +56,7 @@ options(width = 80)
 
 ---
 ## Unser Kurs
-Part 1: Einführung in R und RStudio
++ Part 1: Einführung in R und RStudio
      + R Kickoff
      + Einführung in Progammieren mit R
      + Datenverarbeitung in R
@@ -138,7 +138,7 @@ knitr::include_graphics("img/crs.png")
 > ‘Easting/Northing’ CRS: <br>
 > `c(530000, 180000)`
 
-```{r echo=FALSE, out.extra='align:center;', fig.retina=2.3}
+```{r echo=FALSE, out.extra='align:center;', fig.retina=3.3}
 knitr::include_graphics("img/crs2.png")
 ```
 ]

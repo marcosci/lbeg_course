@@ -64,7 +64,7 @@ options(width = 80)
 
 ---
 ## Unser Kurs
-Part 1: Einführung in R und RStudio
++ Part 1: Einführung in R und RStudio
      + R Kickoff
      + Einführung in Progammieren mit R
      + Datenverarbeitung in R
@@ -97,7 +97,7 @@ object.size(st_geometry(california_simp))
 ```
 
 ---
-```{r fig.retina=1}
+```{r fig.dim=c(12,9), out.extra='margin-bottom:50px;'}
 par(mfrow=c(1,2))
 plot(st_geometry(california))
 plot(st_geometry(california_simp))
@@ -107,15 +107,22 @@ plot(st_geometry(california_simp))
 ---
 # Unary Operationen
 ## Zentroide
-
-```{r}
+.pull-left[
+```{r eval=FALSE}
 # Unary Operationen
 ## Zentroide
-california_simp_centroid = st_centroid(california_simp)
-plot(california_simp["NAME_1"])
-plot(california_simp_centroid["NAME_1"], add = TRUE) 
+california_simp_centroid <- st_centroid(california_simp)
 ```
+]
 
+.pull-right[
+```{r echo=FALSE}
+# Unary Operationen
+## Zentroide
+california_simp_centroid <- st_centroid(california_simp)
+plot(st_geometry(california_simp_centroid))
+```
+]
 
 ---
 # Unary Operationen
@@ -233,3 +240,12 @@ ggplot() +
            default_crs = "EPSG:4326") +
   theme_void()
 ```
+
+---
+# Hands-on #8
+
+<br><br><br>
+> <large>.large[/handson/hands_on_ggplot]</large>
+
+<br><br>
+> <large>.large[/handson/hands_on_sf_advanced]</large>

@@ -106,7 +106,7 @@ knitr::include_graphics("img/raster-intro2.png")
 ---
 # `terra`
 
-```{r echo=FALSE}
+```{r}
 library(terra)
 test_raster <- rast(ncol=10, nrow=10, xmin=-150, xmax=-80, ymin=20, ymax=60)
 test_raster
@@ -123,7 +123,7 @@ plot(test_raster)
 ---
 # `terra`
 
-```{r echo=FALSE}
+```{r}
 raster_filepath = system.file("raster/srtm.tif", package = "spDataLarge")
 my_rast = rast(raster_filepath)
 class(my_rast)
@@ -156,7 +156,7 @@ nlyr(multi_rast)
 
 ---
 # Raster Layer
-```{r}
+```{r fig.dim=c(10, 5)}
 multi_rast3 = subset(multi_rast, 3)
 multi_rast4 = subset(multi_rast, "landsat_4")
 par(mfrow = c(1,2))
@@ -173,7 +173,7 @@ plot(multi_rast4)
 ---
 # Raster Manipulation
 
-```{r}
+```{r fig.dim=c(5,5)}
 elev = rast(nrows = 6, ncols = 6, resolution = 0.5, 
             xmin = -1.5, xmax = 1.5, ymin = -1.5, ymax = 1.5,
             vals = 1:36)
@@ -226,7 +226,7 @@ r3 <- log(elev)
 r4 <- elev > 5
 ```
 
-```{r, echo=FALSE, fig.align='center'}
+```{r, echo=FALSE, fig.align='center', fig.dim=c(15,5)}
 par(mfrow = c(1,4))
 plot(r1)
 plot(r2)
@@ -291,3 +291,9 @@ dem_disagg = disagg(dem_agg, fact = 5, method = "bilinear")
 ```{r echo=FALSE}
 knitr::include_graphics("img/disaggregation.png")
 ```
+
+---
+# Hands-on #8
+
+<br><br><br><br><br>
+> <large>.large[/handson/hands_on_terra]</large>
