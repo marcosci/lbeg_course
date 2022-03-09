@@ -106,7 +106,7 @@ airports <- st_read("data/airports.geojson")
 plot(county)
 
 ## Einzelne Spalten können so ausgewählt werden:
-plot(county[, "TYPE_2"], key.width = lcm(5), key.pos = 4)
+plot(county[, "NAME_1"], key.width = lcm(5), key.pos = 4)
 
 ## Das Aussehen kann hierbei beliebig verändert werden:
 plot(st_geometry(county), border = "pink")

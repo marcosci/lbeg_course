@@ -1,5 +1,6 @@
 # Hands-on: Erstellen von Tabellen mit GT 
 library(gt)
+library(dplyr)
 
 # 1. Tabelle erstellen ----------------------------------------------------
 
@@ -487,3 +488,23 @@ summary_extracted %>%
   dplyr::bind_rows() %>%
   gt()
 
+
+library(cowplot)
+library(patchwork)
+library(ggplot2)
+
+p1 <- mtcars %>% 
+  head(5) %>% 
+  gt()
+
+p2 <-  mtcars %>% 
+  head(5) %>% 
+  ggplot(aes(mpg, hp)) +
+    geom_point()
+
+p1 %>%
+  gtsave("p11.png")
+
+p111 <- ggdraw() + draw_image("p11.png", scale = 0.8)
+
+p2 + p111
