@@ -1,0 +1,238 @@
+---
+title: "Räumliche Daten und R – Part 2 – Marco Sciaini"
+author: "Marco Sciaini"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: ["./css/style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      slideNumberFormat:  |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>
+      ratio: '16:9'
+---
+class: center
+background-size: contain
+
+```{r options, include = FALSE, purl=FALSE}
+library(tidyverse)
+library(sf)
+library(scales)
+library(terra)
+library(RPostgreSQL)
+conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+                 host = "db.qgiscloud.com",
+                 port = "5432", user = "rtafdf_zljbqm", 
+                 password = "d3290ead")
+
+data("incongruent", "aggregating_zones", package = "spData")
+incongr_wgs = st_transform(incongruent, "EPSG:4326")
+aggzone_wgs = st_transform(aggregating_zones, "EPSG:4326")
+
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
+
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  message = FALSE, 
+  collapse = TRUE,
+  fig.height=6.3,
+  fig.align = 'center',
+  fig.retina = 3,
+  dev = "ragg_png", 
+  res = 1000
+)
+
+Sys.setlocale("LC_TIME", "C")
+
+options(width = 80)
+```
+
+<br><br>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 3: Brückenschlagen mit R zu anderer GIS Software</b>
+<br><br><br><br><br><br><br>
+#### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
+<img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
+
+---
+## Unser Kurs
++ Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + Einführung in Progammieren mit R
+     + Datenverarbeitung in R
+     + Kontrollstrukturen
+
++ Part 2: Einführung in räumliche Daten und R
+  + Erste räumliche Gehversuche
+  + Geometrische Operationen mit Vektoren
+  + Geometrische Operationen mit Rasterdaten
+
++ Part 3: Fortgeschrittene Themen zur räumlichen Datenverarbeitung
+  + Reproduzierbares Arbeiten mit Markdown
+  + Interaktives Arbeiten mit Markdown
+  + **Brückenschlagen mit R zu anderer GIS Software**
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+```{r}
+library(RPostgreSQL)
+conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+                 host = "db.qgiscloud.com",
+                 port = "5432", user = "rtafdf_zljbqm", 
+                 password = "d3290ead")
+```
+
+--
+
+```{r}
+dbListTables(conn)
+```
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+```{r}
+library(RPostgreSQL)
+conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+                 host = "db.qgiscloud.com",
+                 port = "5432", user = "rtafdf_zljbqm", 
+                 password = "d3290ead")
+```
+
+```{r}
+dbListFields(conn, "highways")
+```
+
+---
+
+```{r}
+query = paste(
+  "SELECT *",
+  "FROM highways")
+us_route <- st_read(conn, query = query, geom = "wkb_geometry")
+us_route
+```
+
+---
+
+```{r}
+query = paste(
+  "SELECT ST_Union(ST_Buffer(wkb_geometry, 1609 * 20))::geometry",
+  "FROM highways",
+  "WHERE name = 'US Route 1' AND state = 'MD';")
+us_route <- st_read(conn, query = query)
+us_route
+```
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+```{r}
+postgresqlCloseConnection(conn)
+```
+
+
+---
+# Brückenschlagen - QGIS
+
+```{r}
+library(qgisprocess)
+```
+
+---
+
+```{r}
+qgis_providers()
+```
+
+---
+```{r}
+data("incongruent", "aggregating_zones", package = "spData")
+incongr_wgs = st_transform(incongruent, "EPSG:4326")
+aggzone_wgs = st_transform(aggregating_zones, "EPSG:4326")
+```
+
+```{r echo=FALSE}
+p3 <- ggplot(aggzone_wgs) +
+  geom_sf(color = "black", fill = NA)+
+  geom_sf(data = incongr_wgs, color = "red", fill = NA, alpha = 0.4) +
+  theme_void()
+p3
+```
+
+---
+```{r}
+qgis_algo = qgis_algorithms()
+qgis_algo
+```
+
+---
+```{r}
+grep("union", qgis_algo$algorithm, value = TRUE)
+```
+
+---
+```{r}
+alg = "native:union"
+qgis_show_help(alg)
+```
+
+---
+```{r}
+union = qgis_run_algorithm(alg, INPUT = incongr_wgs, OVERLAY = aggzone_wgs)
+union
+```
+
+---
+```{r}
+union_sf = st_as_sf(union)
+union_sf
+```
+
+---
+```{r}
+ggplot(union_sf) +
+  geom_sf() +
+  theme_void()
+```
+
+---
+```{r}
+grep("clean", qgis_algo$algorithm, value = TRUE)
+```
+
+```{r}
+qgis_show_help("grass7:v.clean")
+```
+
+---
+```{r}
+clean = qgis_run_algorithm("grass7:v.clean", input = union_sf,
+                           tool = 10, threshold = 25000)
+clean_sf = st_as_sf(clean)
+```
+
+---
+```{r echo=FALSE, fig.dim=c(13, 14)}
+library(patchwork)
+p1 <- ggplot(union_sf) +
+  geom_sf() +
+  theme_void()
+p2 <- ggplot(clean_sf) +
+  geom_sf() +
+  theme_void()
+p3 + p1 + p2
+```

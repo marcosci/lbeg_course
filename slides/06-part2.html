@@ -148,12 +148,13 @@ class: center
 
 .pull-right[
 
-```
-## Geometry set for 1 feature 
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: 0.3047168 ymin: 1.431415 xmax: 0.3047168 ymax: 1.431415
-## CRS:           NA
+```r
+bb = st_bbox(st_union(x, y))
+box = st_as_sfc(bb)
+set.seed(2017)
+p = st_sample(x = box, size = 10)
+x_and_y = st_intersection(x, y)
+st_intersection(p, x_and_y)
 ```
 ]
 

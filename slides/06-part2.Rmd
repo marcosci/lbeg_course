@@ -181,7 +181,7 @@ knitr::include_graphics("img/spatial-subset.png")
 ]
 
 .pull-right[
-```{r echo=FALSE, layout="l-body"}
+```{r eval=FALSE, layout="l-body"}
 bb = st_bbox(st_union(x, y))
 box = st_as_sfc(bb)
 set.seed(2017)

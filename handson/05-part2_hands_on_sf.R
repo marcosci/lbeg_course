@@ -32,7 +32,6 @@ plot(i, border = "black", col = "darkgrey", lwd = 2)
 
 
 # sfc - Geometrie Spalte
-
 ## Wir brauchen mehr Punkte für eine Spalte:
 pnt2 <- st_point(c(10.333688372401111, 51.804957872859994))
 pnt3 <- st_point(c(7.844758252372815, 48.01435815079368))
@@ -58,7 +57,8 @@ library(mapview)
 mapview(layer)
 
 ## Nur die simple features selektieren:
-st_geometry(layer)
+plot(layer)
+st_geometry(layer) %>% plot()
 
 ## Nur die Daten selektieren:
 st_drop_geometry(layer)
@@ -78,7 +78,6 @@ rainfall
 ### coords : Spaltenname der Koordinaten (X, Y)
 ### crs : Das CRS (NA falls nicht speziell gesetzt)
 rainfall_sf <- st_as_sf(rainfall, coords = c("x_utm", "y_utm"), crs = 32636) # https://epsg.io/32636
-rainfall_sf
 
 mapview(rainfall_sf, zcol = "altitude")
 
@@ -91,7 +90,7 @@ plot(st_geometry(rainfall_sf))
 ## Subsetting von Metainformationen
 library(dplyr)
 rainfall_sf %>% 
-  filter(jan > 100) %>% 
+  filter(jan > 160) %>% 
   st_geometry(rainfall_sf) %>% 
   plot()
 

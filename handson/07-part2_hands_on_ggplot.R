@@ -12,14 +12,14 @@ data(economics)
 # 1. Data -----------------------------------------------------------------
 
 # Plot outline
-ggplot(data = mpg, mapping = aes(x = displ, y = hwy))
+ggplot(mapping = aes(x = displ, y = hwy), data = mpg)
 
 # vereinfachte schreibweise
 ggplot(mpg, aes(displ, hwy))
 
 # alternative schreibweise
 p <- ggplot(mpg, aes(displ, hwy))
-p
+
 
 # 2. Layers ---------------------------------------------------------------
 
@@ -43,7 +43,7 @@ ggplot(mpg, aes(displ, hwy)) +
 
 # Balkendiagramm mit der Klasse auf der x-Achse 
 ggplot(mpg) +
-  geom_bar(aes(x = class))
+  geom_bar(aes(x = drv))
 
 # Darstellung der Qualität (cut) des diamond Datensatzes als Balkendiagramm
 ggplot(diamonds) + 
@@ -64,7 +64,7 @@ ggplot(mpg, aes(class, hwy)) +
   geom_col()
 
 # geom_boxplot
-ggplot(mpg, aes(class, hwy))+
+ggplot(mpg, aes(class, hwy)) +
   geom_boxplot()
 
 # geom_area
@@ -88,7 +88,6 @@ ggplot(mpg, aes(displ, hwy)) +
 
 # stat_summary()
 # Summarise y values at unique/binned x
-
 ggplot(mpg, aes(drv, hwy)) +
   geom_point() +
   stat_summary(fun = "median",
@@ -132,7 +131,7 @@ ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
 
 # Feste Werte für size und alpha ausserhalb der Daten
 ggplot(mpg, aes(displ, hwy)) +
-  geom_point(size= 8, alpha = 1)
+  geom_point(size= 5, alpha = 0.5)
 
 # Alpha innerhalb der der Daten 
 ggplot(mpg, aes(displ, hwy, alpha = class)) + 
@@ -146,7 +145,7 @@ ggplot(mpg, aes(displ, hwy, shape = class)) +
   geom_point(size = 6)
 
 # Farbe pro Klasse
-ggplot(mpg, aes(displ, hwy, color = class)) + 
+ggplot(mpg, aes(displ, hwy, color = class, shape = class)) + 
   geom_point(size = 6)
 
 # Farbe für alle Daten
@@ -173,13 +172,12 @@ ggplot(economics, aes(date, unemploy)) +
 # width // alpha // colour // fill // group // linetype // size // 
 
 ggplot(mpg, aes(class, hwy)) + 
-  geom_col(width = .8)
-
+  geom_col(width = .5)
 
 # Multiple geoms in einem Plot --------------------------------------------
 ggplot(mpg, aes(displ, hwy)) + 
-  geom_line() +
-  geom_point()
+  geom_point() +
+  geom_line() 
 
 # Reihenfolge der Geoms ist wichtig
 ggplot(mpg, aes(displ, hwy)) + 
@@ -189,7 +187,6 @@ ggplot(mpg, aes(displ, hwy)) +
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(color="red", size = 6) +
   geom_line(size=2)
-
 
 # Plots in Collage einbetten ----------------------------------------------
 library(patchwork)
@@ -205,7 +202,6 @@ p4 <- ggplot(mtcars) + geom_bar(aes(carb))
 p1 + p2 + p3 + p4
 
 p1 + p2 + p3 + p4 + plot_annotation(tag_levels = 'A')
-
 
 (p1 | p2 | p3) /
   p4

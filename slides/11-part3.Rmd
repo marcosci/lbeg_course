@@ -1,0 +1,184 @@
+---
+title: "Räumliche Daten und R – Part 2 – Marco Sciaini"
+author: "Marco Sciaini"
+date: "`r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    seal: false
+    css: ["./css/style.css"]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      beforeInit: "https://platform.twitter.com/widgets.js"
+      slideNumberFormat:  |
+        <div class="progress-bar-container">
+          <div class="progress-bar" style="width: calc(%current% / %total% * 100%);">
+          </div>
+        </div>
+      ratio: '16:9'
+---
+class: center
+background-size: contain
+
+```{r options, include = FALSE, purl=FALSE}
+library(tidyverse)
+library(sf)
+library(scales)
+library(terra)
+
+seismic <- st_read("data/seismic.geojson")
+
+seismic <- seismic %>%
+  mutate(ValueRange = factor(ValueRange,
+                             levels = c("< 1","1 - 2","2 - 5","5 - 10","10 - 14")))
+
+hook_source <- knitr::knit_hooks$get('source')
+knitr::knit_hooks$set(source = function(x, options) {
+  x <- stringr::str_replace(x, "^[[:blank:]]?([^*].+?)[[:blank:]]*#<<[[:blank:]]*$", "*\\1")
+  hook_source(x, options)
+})
+
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  message = FALSE, 
+  collapse = TRUE,
+  fig.height=6.3,
+  fig.align = 'center',
+  fig.retina = 3,
+  dev = "ragg_png", 
+  res = 1000
+)
+
+Sys.setlocale("LC_TIME", "C")
+
+options(width = 80)
+```
+
+<br><br>
+#  Räumliche Analysen mit <code style='color:#ebc500;'>R</code><br><b style='font-size:25pt;color:#a7a7a7;'>Part 3: future - Der einfache Weg in R zu parallelisieren</b>
+<br><br><br><br><br><br><br>
+#### Marco Sciaini<b style='color:#ccba56;font-weight:400;line-height:150%;'><br>Landesamt für Bergbau, Energie und Geologie<br>07. März, 2022</b><br>
+<img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"></img>
+
+---
+## Unser Kurs
++ Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + Einführung in Progammieren mit R
+     + Datenverarbeitung in R
+     + Kontrollstrukturen
+
++ Part 2: Einführung in räumliche Daten und R
+  + Erste räumliche Gehversuche
+  + Geometrische Operationen mit Vektoren
+  + Geometrische Operationen mit Rasterdaten
+
++ Part 3: Fortgeschrittene Themen zur räumlichen Datenverarbeitung
+  + Reproduzierbares Arbeiten mit Markdown
+  + Interaktives Arbeiten mit Markdown
+  + Brückenschlagen mit R zu anderer GIS Software
+  + **future - Der einfache Weg in R zu parallelisieren**
+
+---
+# future - Der einfache Weg in R zu parallelisieren
+
+- Einfacher, einheitlicher Weg zu Parallelisieren
+- "Write once, run anywhere"
+- 100% cross platform
+- im Vergleich zu **alle** anderen R Paketen ... funktioniert es einfach
+
+
+---
+# future 
+
+### Alles was wir tun müssen:
+
+```{r eval=FALSE}
+y <- x %>% map(slow)
+```
+
+--
+
+### ... in folgendes umwandeln:
+
+```{r eval=FALSE}
+y <- x %>% future_map(slow)
+```
+
+---
+# Pläne für die ... `future`
+
+- sequentiell <br> `plan(sequential)`
+- parallel auf lokaler Maschine <br> `plan(multisession)`
+- multiple lokale Maschinen, Server oder Cloud Services <br> `plan(cluster, workers=c("n1", "lbeg1.nds.de", "aws.cloud.com"))`
+- High-performance compute (HPD) cluster <br> `plan(batchtools_slurm)`
+
+> Der Code bleibt exakt gleich, egal wo wir das Rechnen ausführen.
+
+---
+# Beispiele
+```{r}
+library(furrr)
+library(purrr)
+
+map(c("hello", "world"), ~.x)
+
+future_map(c("hello", "world"), ~.x)
+```
+
+---
+# ... und nun parallel:
+
+```{r}
+plan(multisession, workers = 2)
+
+future_map(c("hello", "world"), ~.x)
+```
+
+---
+# Hier der Beweis:
+
+.pull-left[
+```{r}
+library(tictoc)
+
+plan(sequential)
+
+tic()
+nothingness <- future_map(c(2, 2, 2), ~Sys.sleep(.x))
+toc()
+```
+]
+
+.pull-left[
+```{r}
+plan(multisession, workers = 3)
+
+tic()
+nothingness <- future_map(c(2, 2, 2), ~Sys.sleep(.x))
+toc()
+```
+]
+
+---
+# Ladebalken
+
+```{r eval=FALSE}
+library(progressr)
+
+fn <- function(x, p) {
+  p()
+  Sys.sleep(.2)
+  sum(x)
+}
+
+with_progress({
+  p <- progressor(steps = length(x))
+  result <- future_map(x, fn, p = p)
+})
+#> |=====================                                               |  20%
+```
+

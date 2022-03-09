@@ -9,16 +9,20 @@ library(rdwd)
 load(system.file("extdata/DEU.rda", package="rdwd"))
 germany <- st_as_sf(DEU)
 
-ggplot(germany) +
-  geom_sf() +
-  theme_void()
+glimpse(germany)
+
+germany %>% 
+  st_simplify(dTolerance = 4000) %>% 
+  ggplot() +
+    geom_sf() +
+    theme_void()
 
 # Erzeugt vereinfachte Versionen des germany-Datensatzes und
 # stellt diese dar. Experimentiert mit verschiedenen Werten 
 # für dTolerance (von 100 bis 100.000) von st_simplify().
 # 
 # 1. Bei welchem Wert bricht die Form des Ergebnisses bei jeder Methode
-#    zusammen, so dass Neuseeland nicht mehr erkennbar ist?
+#    zusammen, so dass Deutschland nicht mehr erkennbar ist?
 
 # Findet das geographische Zentroid von Deutschland. Wie weit ist es von
 # von dem geographischen Zentroid von Niedersachen und Baden-Württemberg
@@ -86,12 +90,12 @@ p1 / p2
 p1 + p2
 
 
-
 ##### Lösung zu Geometry Operations ----
 plot(st_simplify(st_geometry(germany), dTolerance = 100))
-plot(st_simplify(st_geometry(germany), dTolerance = 1000))
+plot(st_simplify(st_geometry(germany), dTolerance = 1000))  
+plot(st_simplify(st_geometry(germany), dTolerance = 5000))
 plot(st_simplify(st_geometry(germany), dTolerance = 10000))
-plot(st_simplify(st_geometry(germany), dTolerance = 50000))
+plot(st_simplify(st_geometry(germany), dTolerance = 50000)) 
 plot(st_simplify(st_geometry(germany), dTolerance = 100000))
 plot(st_simplify(st_geometry(germany), dTolerance = 10000, preserveTopology = TRUE))
 
@@ -99,11 +103,20 @@ st_simplify(germany, dTolerance = 30000) %>%
   filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% 
   st_cast("POLYGON")
 
+
+st_centroid(germany) %>% plot()
+
 nds_cent = st_centroid(germany %>% filter(NUTS_NAME == "Niedersachsen"))
 bw_cent = st_centroid(germany %>% filter(NUTS_NAME == "Baden-Württemberg"))
 ger_cent = st_sf(st_centroid(st_union(germany)))
+
 ger_cent$NUTS_NAME <- "Deutschland"
 st_geometry(ger_cent) <- "geometry"
+
+st_distance(nds_cent, ger_cent)
+st_distance(bw_cent, ger_cent)
+
+
 st_distance(rbind(nds_cent, bw_cent, ger_cent))
 
 ggplot(germany) +
@@ -113,6 +126,8 @@ ggplot(germany) +
   geom_sf(data = ger_cent, color = "purple") +
   theme_minimal()
 
-germany_bor = st_cast(germany, "MULTILINESTRING")
-germany_bor$borders = st_length(germany_bor)
-View(arrange(germany_bor, borders))
+germany_bor <- st_cast(germany, "MULTILINESTRING")
+germany_bor %>% 
+  mutate(borders = st_length(geometry)) %>% 
+  arrange(borders) %>% 
+  View()

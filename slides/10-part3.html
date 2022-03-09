@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Räumliche Daten und R – Part 2 – Marco Sciaini</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Marco Sciaini" />
+    <meta name="date" content="2022-03-09" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center
+background-size: contain
+
+
+
+&lt;br&gt;&lt;br&gt;
+#  Räumliche Analysen mit &lt;code style='color:#ebc500;'&gt;R&lt;/code&gt;&lt;br&gt;&lt;b style='font-size:25pt;color:#a7a7a7;'&gt;Part 3: Brückenschlagen mit R zu anderer GIS Software&lt;/b&gt;
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+#### Marco Sciaini&lt;b style='color:#ccba56;font-weight:400;line-height:150%;'&gt;&lt;br&gt;Landesamt für Bergbau, Energie und Geologie&lt;br&gt;07. März, 2022&lt;/b&gt;&lt;br&gt;
+&lt;img src = "img/intro.png", style = "position:absolute; right: 31%; top: 37%; width: 37%; z-index: 0 ;"&gt;&lt;/img&gt;
+
+---
+## Unser Kurs
++ Part 1: Einführung in R und RStudio
+     + R Kickoff
+     + Einführung in Progammieren mit R
+     + Datenverarbeitung in R
+     + Kontrollstrukturen
+
++ Part 2: Einführung in räumliche Daten und R
+  + Erste räumliche Gehversuche
+  + Geometrische Operationen mit Vektoren
+  + Geometrische Operationen mit Rasterdaten
+
++ Part 3: Fortgeschrittene Themen zur räumlichen Datenverarbeitung
+  + Reproduzierbares Arbeiten mit Markdown
+  + Interaktives Arbeiten mit Markdown
+  + **Brückenschlagen mit R zu anderer GIS Software**
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+
+```r
+library(RPostgreSQL)
+conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+                 host = "db.qgiscloud.com",
+                 port = "5432", user = "rtafdf_zljbqm", 
+                 password = "d3290ead")
+```
+
+--
+
+
+```r
+dbListTables(conn)
+## [1] "spatial_ref_sys" "topology"        "layer"           "highways"       
+## [5] "restaurants"
+```
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+
+```r
+library(RPostgreSQL)
+conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+                 host = "db.qgiscloud.com",
+                 port = "5432", user = "rtafdf_zljbqm", 
+                 password = "d3290ead")
+```
+
+
+```r
+dbListFields(conn, "highways")
+## [1] "qc_id"        "wkb_geometry" "gid"          "feature"      "name"        
+## [6] "state"
+```
+
+---
+
+
+```r
+query = paste(
+  "SELECT *",
+  "FROM highways")
+us_route &lt;- st_read(conn, query = query, geom = "wkb_geometry")
+us_route
+## Simple feature collection with 16433 features and 5 fields
+## Geometry type: MULTILINESTRING
+## Dimension:     XY
+## Bounding box:  xmin: -5714069 ymin: -2316008 xmax: 3731384 ymax: 2926506
+## Projected CRS: NAD27 / US National Atlas Equal Area
+## First 10 features:
+##    qc_id gid           feature          name state
+## 1      0   4 Principal Highway State Route 3    AK
+## 2      1   5 Principal Highway State Route 3    AK
+## 3      2   7 Principal Highway State Route 3    AK
+## 4      3   9 Principal Highway State Route 3    AK
+## 5      4  10 Principal Highway State Route 3    AK
+## 6      5  12 Principal Highway State Route 3    AK
+## 7      6  13 Principal Highway State Route 4    AK
+## 8      7  14 Principal Highway State Route 3    AK
+## 9      8  16 Principal Highway State Route 1    AK
+## 10     9  17 Principal Highway State Route 1    AK
+##                      wkb_geometry
+## 1  MULTILINESTRING ((-2202810 ...
+## 2  MULTILINESTRING ((-2215514 ...
+## 3  MULTILINESTRING ((-2215514 ...
+## 4  MULTILINESTRING ((-2241898 ...
+## 5  MULTILINESTRING ((-2381938 ...
+## 6  MULTILINESTRING ((-2411296 ...
+## 7  MULTILINESTRING ((-2139169 ...
+## 8  MULTILINESTRING ((-2401164 ...
+## 9  MULTILINESTRING ((-2369821 ...
+## 10 MULTILINESTRING ((-2387145 ...
+```
+
+---
+
+
+```r
+query = paste(
+  "SELECT ST_Union(ST_Buffer(wkb_geometry, 1609 * 20))::geometry",
+  "FROM highways",
+  "WHERE name = 'US Route 1' AND state = 'MD';")
+us_route &lt;- st_read(conn, query = query)
+us_route
+## Simple feature collection with 1 feature and 0 fields
+## Geometry type: POLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 1955623 ymin: -373156.5 xmax: 2048441 ymax: -258903.8
+## Projected CRS: NAD27 / US National Atlas Equal Area
+##                         st_union
+## 1 POLYGON ((1959510 -325344.5...
+```
+
+---
+# Brückenschlagen - räumliche Datenbanken
+
+
+```r
+postgresqlCloseConnection(conn)
+## [1] TRUE
+```
+
+
+---
+# Brückenschlagen - QGIS
+
+
+```r
+library(qgisprocess)
+```
+
+---
+
+
+```r
+qgis_providers()
+## # A tibble: 6 × 2
+##   provider provider_title   
+##   &lt;chr&gt;    &lt;chr&gt;            
+## 1 3d       QGIS (3D)        
+## 2 gdal     GDAL             
+## 3 grass7   GRASS            
+## 4 native   QGIS (native c++)
+## 5 qgis     QGIS             
+## 6 saga     SAGA
+```
+
+---
+
+```r
+data("incongruent", "aggregating_zones", package = "spData")
+incongr_wgs = st_transform(incongruent, "EPSG:4326")
+aggzone_wgs = st_transform(aggregating_zones, "EPSG:4326")
+```
+
+&lt;img src="10-part3_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+qgis_algo = qgis_algorithms()
+qgis_algo
+## # A tibble: 1,011 × 27
+##    provider provider_title algorithm    algorithm_id algorithm_title provider_id
+##    &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;        &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;      
+##  1 3d       QGIS (3D)      3d:tessella… tessellate   Tessellate      3d         
+##  2 gdal     GDAL           gdal:aspect  aspect       Aspect          gdal       
+##  3 gdal     GDAL           gdal:assign… assignproje… Assign project… gdal       
+##  4 gdal     GDAL           gdal:buffer… buffervecto… Buffer vectors  gdal       
+##  5 gdal     GDAL           gdal:buildv… buildvirtua… Build virtual … gdal       
+##  6 gdal     GDAL           gdal:buildv… buildvirtua… Build virtual … gdal       
+##  7 gdal     GDAL           gdal:clipra… cliprasterb… Clip raster by… gdal       
+##  8 gdal     GDAL           gdal:clipra… cliprasterb… Clip raster by… gdal       
+##  9 gdal     GDAL           gdal:clipve… clipvectorb… Clip vector by… gdal       
+## 10 gdal     GDAL           gdal:clipve… clipvectorb… Clip vector by… gdal       
+## # … with 1,001 more rows, and 21 more variables: can_cancel &lt;lgl&gt;,
+## #   deprecated &lt;lgl&gt;, group &lt;chr&gt;, has_known_issues &lt;lgl&gt;, help_url &lt;chr&gt;,
+## #   name &lt;chr&gt;, requires_matching_crs &lt;lgl&gt;, short_description &lt;chr&gt;,
+## #   tags &lt;list&gt;, provider_can_be_activated &lt;lgl&gt;,
+## #   default_raster_file_extension &lt;chr&gt;, default_vector_file_extension &lt;chr&gt;,
+## #   provider_is_active &lt;lgl&gt;, provider_long_name &lt;chr&gt;, provider_name &lt;chr&gt;,
+## #   supported_output_raster_extensions &lt;list&gt;, …
+```
+
+---
+
+```r
+grep("union", qgis_algo$algorithm, value = TRUE)
+## [1] "native:union"      "saga:fuzzyunionor" "saga:polygonunion"
+```
+
+---
+
+```r
+alg = "native:union"
+qgis_show_help(alg)
+## Union (native:union)
+## 
+## ----------------
+## Description
+## ----------------
+## This algorithm checks overlaps between features within the Input layer and creates separate features for overlapping and non-overlapping parts. The area of overlap will create as many identical overlapping features as there are features that participate in that overlap.
+## 
+## An Overlay layer can also be used, in which case features from each layer are split at their overlap with features from the other one, creating a layer containing all the portions from both Input and Overlay layers. The attribute table of the Union layer is filled with attribute values from the respective original layer for non-overlapping features, and attribute values from both layers for overlapping features.
+## 
+## ----------------
+## Arguments
+## ----------------
+## 
+## INPUT: Input layer
+## 	Argument type:	source
+## 	Acceptable values:
+## 		- Path to a vector layer
+## OVERLAY: Overlay layer
+## 	Argument type:	source
+## 	Acceptable values:
+## 		- Path to a vector layer
+## OVERLAY_FIELDS_PREFIX: Overlay fields prefix
+## 	Argument type:	string
+## 	Acceptable values:
+## 		- String value
+## OUTPUT: Union
+## 	Argument type:	sink
+## 	Acceptable values:
+## 		- Path for new vector layer
+## 
+## ----------------
+## Outputs
+## ----------------
+## 
+## OUTPUT: &lt;outputVector&gt;
+## 	Union
+```
+
+---
+
+```r
+union = qgis_run_algorithm(alg, INPUT = incongr_wgs, OVERLAY = aggzone_wgs)
+## Running /Applications/QGIS.app/Contents/MacOS/bin/qgis_process --json run \
+##   'native:union' \
+##   '--INPUT=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d97ac40305.gpkg' \
+##   '--OVERLAY=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d95aa27c3a.gpkg' \
+##   '--OUTPUT=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d96189f252.gpkg'
+union
+## &lt;Result of `qgis_run_algorithm("native:union", ...)`&gt;
+## List of 1
+##  $ OUTPUT: 'qgis_outputVector' chr "/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d96189f252.gpkg"
+```
+
+---
+
+```r
+union_sf = st_as_sf(union)
+union_sf
+## Simple feature collection with 22 features and 6 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -1.732324 ymin: 53.88903 xmax: -1.651969 ymax: 53.91912
+## Geodetic CRS:  WGS 84
+## # A tibble: 22 × 7
+##    level     value fid_2 geo_code geo_label geo_labelw                      geom
+##    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt;             &lt;MULTIPOLYGON [°]&gt;
+##  1 Incongru…  4.04     1 E020023… Leeds 003 &lt;NA&gt;       (((-1.684818 53.91045, -…
+##  2 Incongru…  4.04     2 E020023… Leeds 004 &lt;NA&gt;       (((-1.690975 53.90831, -…
+##  3 Incongru…  5.01     1 E020023… Leeds 003 &lt;NA&gt;       (((-1.715661 53.91356, -…
+##  4 Incongru…  5.01     2 E020023… Leeds 004 &lt;NA&gt;       (((-1.695207 53.90847, -…
+##  5 Incongru…  4.93     1 E020023… Leeds 003 &lt;NA&gt;       (((-1.697137 53.91318, -…
+##  6 Incongru…  5.12     1 E020023… Leeds 003 &lt;NA&gt;       (((-1.701014 53.9046, -1…
+##  7 Incongru…  5.12     2 E020023… Leeds 004 &lt;NA&gt;       (((-1.691367 53.89463, -…
+##  8 Incongru…  6.55     2 E020023… Leeds 004 &lt;NA&gt;       (((-1.689801 53.90366, -…
+##  9 Incongru…  3.75     2 E020023… Leeds 004 &lt;NA&gt;       (((-1.668967 53.90157, -…
+## 10 Incongru…  5.43     1 E020023… Leeds 003 &lt;NA&gt;       (((-1.703471 53.91359, -…
+## # … with 12 more rows
+```
+
+---
+
+```r
+ggplot(union_sf) +
+  geom_sf() +
+  theme_void()
+```
+
+&lt;img src="10-part3_files/figure-html/unnamed-chunk-17-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+---
+
+```r
+grep("clean", qgis_algo$algorithm, value = TRUE)
+## [1] "grass7:v.clean"
+```
+
+
+```r
+qgis_show_help("grass7:v.clean")
+## v.clean (grass7:v.clean)
+## 
+## ----------------
+## Description
+## ----------------
+## Toolset for cleaning topology of vector map.
+## 
+## ----------------
+## Arguments
+## ----------------
+## 
+## input: Layer to clean
+## 	Argument type:	source
+## 	Acceptable values:
+## 		- Path to a vector layer
+## type: Input feature type
+## 	Argument type:	enum
+## 	Available values:
+## 		- 0: point
+## 		- 1: line
+## 		- 2: boundary
+## 		- 3: centroid
+## 		- 4: area
+## 		- 5: face
+## 		- 6: kernel
+## 	Acceptable values:
+## 		- Number of selected option, e.g. '1'
+## 		- Comma separated list of options, e.g. '1,3'
+## tool: Cleaning tool
+## 	Argument type:	enum
+## 	Available values:
+## 		- 0: break
+## 		- 1: snap
+## 		- 2: rmdangle
+## 		- 3: chdangle
+## 		- 4: rmbridge
+## 		- 5: chbridge
+## 		- 6: rmdupl
+## 		- 7: rmdac
+## 		- 8: bpol
+## 		- 9: prune
+## 		- 10: rmarea
+## 		- 11: rmline
+## 		- 12: rmsa
+## 	Acceptable values:
+## 		- Number of selected option, e.g. '1'
+## 		- Comma separated list of options, e.g. '1,3'
+## threshold: Threshold (comma separated for each tool)
+## 	Argument type:	string
+## 	Acceptable values:
+## 		- String value
+## -b: Do not build topology for the output vector
+## 	Argument type:	boolean
+## 	Acceptable values:
+## 		- 1 for true/yes
+## 		- 0 for false/no
+## -c: Combine tools with recommended follow-up tools
+## 	Argument type:	boolean
+## 	Acceptable values:
+## 		- 1 for true/yes
+## 		- 0 for false/no
+## output: Cleaned
+## 	Argument type:	vectorDestination
+## 	Acceptable values:
+## 		- Path for new vector layer
+## error: Errors
+## 	Argument type:	vectorDestination
+## 	Acceptable values:
+## 		- Path for new vector layer
+## GRASS_REGION_PARAMETER: GRASS GIS 7 region extent
+## 	Argument type:	extent
+## 	Acceptable values:
+## 		- A comma delimited string of x min, x max, y min, y max. E.g. '4,10,101,105'
+## 		- Path to a layer. The extent of the layer is used.
+## GRASS_SNAP_TOLERANCE_PARAMETER: v.in.ogr snap tolerance (-1 = no snap)
+## 	Argument type:	number
+## 	Acceptable values:
+## 		- A numeric value
+## GRASS_MIN_AREA_PARAMETER: v.in.ogr min area
+## 	Argument type:	number
+## 	Acceptable values:
+## 		- A numeric value
+## GRASS_OUTPUT_TYPE_PARAMETER: v.out.ogr output type
+## 	Argument type:	enum
+## 	Available values:
+## 		- 0: auto
+## 		- 1: point
+## 		- 2: line
+## 		- 3: area
+## 	Acceptable values:
+## 		- Number of selected option, e.g. '1'
+## 		- Comma separated list of options, e.g. '1,3'
+## GRASS_VECTOR_DSCO: v.out.ogr output data source options (dsco)
+## 	Argument type:	string
+## 	Acceptable values:
+## 		- String value
+## GRASS_VECTOR_LCO: v.out.ogr output layer options (lco)
+## 	Argument type:	string
+## 	Acceptable values:
+## 		- String value
+## GRASS_VECTOR_EXPORT_NOCAT: Also export features without category (not labeled). Otherwise only features with category are exported
+## 	Argument type:	boolean
+## 	Acceptable values:
+## 		- 1 for true/yes
+## 		- 0 for false/no
+## 
+## ----------------
+## Outputs
+## ----------------
+## 
+## output: &lt;outputVector&gt;
+## 	Cleaned
+## error: &lt;outputVector&gt;
+## 	Errors
+```
+
+---
+
+```r
+clean = qgis_run_algorithm("grass7:v.clean", input = union_sf,
+                           tool = 10, threshold = 25000)
+## Running /Applications/QGIS.app/Contents/MacOS/bin/qgis_process --json run \
+##   'grass7:v.clean' \
+##   '--input=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d931f48694.gpkg' \
+##   '--type=0' '--tool=10' '--threshold=25000' \
+##   '--output=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d92caf782b.gpkg' \
+##   '--error=/var/folders/md/ms6zrv3d6rd4506k3hd7dt140000gn/T//RtmpsGWQR1/file124d934251198/file124d933fa65f8.gpkg' \
+##   '--GRASS_OUTPUT_TYPE_PARAMETER=0'
+clean_sf = st_as_sf(clean)
+```
+
+---
+&lt;img src="10-part3_files/figure-html/unnamed-chunk-21-1.png" width="936" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

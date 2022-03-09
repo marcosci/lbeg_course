@@ -1,10 +1,22 @@
+library(terra)
 # Lies die Datei raster/nlcd.tif aus dem Paket spDataLarge ein. 
 # Welche Art von Informationen kannst du über die Eigenschaften dieser Datei erhalten?
+nlcd_file = system.file("raster/nlcd.tif", package = "spDataLarge")
+"data/dgm.tif"
+nlcd_rast = rast(nlcd_file)
+nlcd_rast
+
+nlyr(nlcd_rast)
+res(nlcd_rast)
+dim(nlcd_rast)
+ras_bbox <- ext(nlcd_rast)
+plot(nlcd_rast)
+
 
 
 # Erstelle ein neues Raster mit neun Zeilen und Spalten und einer Auflösung von 0,5 Dezimalgrad (WGS84). 
 # Fülle es mit Zufallszahlen. Extrahiere die Werte der vier Eckzellen.
-
+install.packages("spDataLarge", repos = "https://geocompr.r-universe.dev")
 
 # Plotte ein Histogramm und Boxplot der Datei dem.tif aus dem Paket spDataLarge 
 # (system.file("raster/dem.tif", package = "spDataLarge")).
@@ -12,11 +24,13 @@
 # NDVI berechnen
 multi_raster_file = system.file("raster/landsat.tif", package = "spDataLarge")
 multi_rast = rast(multi_raster_file)
+
 ndvi_fun = function(nir, red){
   (nir - red) / (nir + red)
 }
-ndvi_rast = lapp(multi_rast[[c(4, 3)]], fun = ndvi_fun)
 
+ndvi_rast = lapp(multi_rast[[c(4, 3)]], fun = ndvi_fun)
+plot(ndvi_rast)
 # Berechne den Normalized Difference Water Index (NDWI; (green - nir)/(green + nir)) 
 # aus dem Landsat Bild.
 
@@ -26,7 +40,12 @@ ndvi_rast = lapp(multi_rast[[c(4, 3)]], fun = ndvi_fun)
 # Plotte die  Ergebnisse. 
 # Fallen dir unterschiede auf?
 srtm = rast(system.file("raster/srtm.tif", package = "spDataLarge"))
+res(srtm)
+
+
+
 rast_template = rast(ext(srtm), res = 0.01)
+
 srtm_resampl1 = resample(srtm, y = rast_template, method = "bilinear")
 srtm_resampl2 = resample(srtm, y = rast_template, method = "near")
 srtm_resampl3 = resample(srtm, y = rast_template, method = "cubic")
