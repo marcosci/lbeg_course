@@ -1,22 +1,31 @@
 library(RPostgreSQL)
 library(DBI)
+library(sf)
 library(odbc)
 library(dplyr)
 library(dbplyr)
 
 # Datenbanken ------------------------------------------------------------
-conn = dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
+conn <- dbConnect(drv = PostgreSQL(), dbname = "rtafdf_zljbqm",
                  host = "db.qgiscloud.com",
                  port = "5432", user = "rtafdf_zljbqm", 
                  password = "d3290ead")
 
+# Datenbank untersuchen:
 dbListTables(conn)
 dbListFields(conn, "highways")
 
+# Einlesen in R und mit dplyr bearbeiten:
 highways_db <- tbl(conn, "highways")
-highways_db %>% select(feature) 
+
+highways_db %>% 
+  select(feature) %>% 
+  filter(feature == "Principal Highway")
+
+# dplyr Statement in SQL übersetzen
 highways_db %>% select(feature) %>% show_query()
 
+# Als Geodaten einlesen:
 query = paste(
   "SELECT *",
   "FROM highways")
@@ -33,6 +42,7 @@ us_route
 
 plot(st_geometry(us_route))
 
+# Verbindung schließen:
 postgresqlCloseConnection(conn)
 
 # QGIS ------------------------------------------------------------------
@@ -40,37 +50,39 @@ library(qgisprocess)
 library(terra)
 qgis_providers()
 
-dem = rast(system.file("raster/dem.tif", package = "spDataLarge"))
+# Daten einlesen:
+dem <- rast(system.file("raster/dem.tif", package = "spDataLarge"))
 
-dem_slope = terrain(dem, unit = "radians")
-dem_aspect = terrain(dem, v = "aspect", unit = "radians")
+# Terra Operationen:
+dem_slope <- terrain(dem, unit = "radians")
+dem_aspect <- terrain(dem, v = "aspect", unit = "radians")
 
-dem_slope = terrain(dem, unit = "radians")
-dem_aspect = terrain(dem, v = "aspect", unit = "radians")
+plot(dem)
 
-plot(dem_aspect)
-
+# Hilfe von QGIS Funktionen anzeigen:
 qgis_show_help("saga:sagawetnessindex")
 
-dem_wetness = qgis_run_algorithm("saga:sagawetnessindex", DEM = dem)
+# Funktion ausführen und in natives R Objekt umwandeln:
+dem_wetness <- qgis_run_algorithm("saga:sagawetnessindex", DEM = dem)
+dem_wetness_twi <- qgis_as_terra(dem_wetness$TWI)
 
-dem_wetness_twi = qgis_as_terra(dem_wetness$TWI)
-
+# Selbiges für Geomorphons:
 grep("geomorphon", qgis_algo$algorithm, value = TRUE)
 qgis_show_help("grass7:r.geomorphon")
-
-dem_geomorph = qgis_run_algorithm("grass7:r.geomorphon", elevation = dem, 
+dem_geomorph <- qgis_run_algorithm("grass7:r.geomorphon", elevation = dem, 
                                   `-m` = TRUE, search = 120)
+dem_geomorph_terra <- qgis_as_terra(dem_geomorph$forms)
 
-dem_geomorph_terra = qgis_as_terra(dem_geomorph$forms)
 
+# Visualisierung mit ggplo2:
 data <- stars::st_as_stars(dem_geomorph_terra)
 data <- sf::st_as_sf(data)
+names(data)[1] <- "geomorph"
 
 map_geomorph <- ggplot() +
   geom_sf(data = data, 
-          aes(fill = file1015f5f3dab89.tif,
-              color = file1015f5f3dab89.tif), 
+          aes(fill = geomorph,
+              color = geomorph), 
           size = 0.01) +
   scale_fill_brewer(palette = "Pastel1", name = "Geomorphon") +
   guides(color = FALSE) +
@@ -78,11 +90,12 @@ map_geomorph <- ggplot() +
 
 data <- stars::st_as_stars(dem_wetness_twi)
 data <- sf::st_as_sf(data)
+names(data)[1] <- "wetness"
 
 map_twi <- ggplot() +
   geom_sf(data = data, 
-          aes(fill = file1015f201ce4e1.tif,
-              color = file1015f201ce4e1.tif), 
+          aes(fill = wetness,
+              color = wetness), 
           size = 0.01) +
   scale_fill_distiller(palette = "YlGnBu", name = "TWI", direction = 1) +
   guides(color = FALSE) +

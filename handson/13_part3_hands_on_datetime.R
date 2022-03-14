@@ -4,11 +4,10 @@ ymd("20110604")
 mdy("06-04-2011")
 dmy("04/06/2011")
 
-arrive <- ymd_hms("2011-06-04 12:00:00", tz = "Pacific/Auckland")
+arrive <- ymd_hms("2011-06-04 12:00:00")
 arrive
 
-
-leave <- ymd_hms("2011-08-10 14:00:00", tz = "Pacific/Auckland")
+leave <- ymd_hms("2011-08-10 14:00:00")
 leave
 
 wday(arrive)
@@ -24,7 +23,8 @@ x <- c('February 20th 1973',
 guess_formats(x, "mdy", print_matches = TRUE)
 
 leap_year(arrive)
-difftime(leave,arrive)
+
+difftime(leave, arrive)
 
 lubridate::today()  
 now()
@@ -33,3 +33,5 @@ ymd(date(now()))
 
 mdy("March 6, 1957")
 dmy("03/06/2015")
+
+

@@ -2501,17 +2501,19 @@ Handson
 <li>gstat</li>
 <li>future</li>
 <li>qgisprocess</li>
-<li>rgrass7</li>
 <li>spData</li>
 <li>spDataLarge</li>
 <li>repurrrsive</li>
+<li>DBI</li>
 </ul></li>
 </ul>
 <p>Du kannst alle benötigten R Pakete installieren, indem du die folgenden Zeilen in der R Kommandozeile ausführst:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># Package names</span>
-<span class='va'>packages</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"tidyverse"</span>, <span class='st'>"rnaturalearth"</span>, <span class='st'>"sf"</span>, <span class='st'>"terra"</span>, <span class='st'>"stars"</span>, <span class='st'>"pool"</span>, <span class='st'>"mapview"</span>, <span class='st'>"tmap"</span>, <span class='st'>"gstat"</span>, <span class='st'>"qgisprocess"</span>, <span class='st'>"rgrass7"</span>, <span class='st'>"spDataLarge"</span>, <span class='st'>"repurrrsive"</span><span class='op'>)</span>
+<span class='va'>packages</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"tidyverse"</span>, <span class='st'>"rnaturalearth"</span>, <span class='st'>"sf"</span>, <span class='st'>"terra"</span>, <span class='st'>"stars"</span>, <span class='st'>"pool"</span>,
+              <span class='st'>"mapview"</span>, <span class='st'>"tmap"</span>, <span class='st'>"gstat"</span>, <span class='st'>"qgisprocess"</span>, <span class='st'>"spDataLarge"</span>, 
+              <span class='st'>"repurrrsive"</span>, <span class='st'>"future"</span>, <span class='st'>"DBI"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='va'>packages</span><span class='op'>)</span>
 </code></pre>
 </div>

@@ -90,6 +90,31 @@ p1 / p2
 p1 + p2
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##### Lösung zu Geometry Operations ----
 plot(st_simplify(st_geometry(germany), dTolerance = 100))
 plot(st_simplify(st_geometry(germany), dTolerance = 1000))  
