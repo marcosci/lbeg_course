@@ -2,7 +2,7 @@
 library(readxl)
 library(dplyr)
 library(ggplot2)
-monatlich_A_2004_2011 <- read_excel("~/Downloads/monatlich_A_2004_2011.xlsx")
+monatlich_A_2004_2011 <- read_excel("data/monatlich_A_2004_2011.xlsx")
 View(monatlich_A_2004_2011)
 
 monatlich_A_2004_2011 %>%
@@ -22,8 +22,8 @@ library(exactextractr)
 library(ggplot2)
 library(classInt)
 
-bkfifty_poly <- st_read("~/Downloads/Versiegelungsdaten/BK50_Polygone.shp")
-cop_hannover <- rast("~/Downloads/Versiegelungsdaten/Copernicus_VersGrad_2018_extract_Hannover.tif")
+bkfifty_poly <- st_read("BK50_Polygone.shp")
+cop_hannover <- rast("Copernicus_VersGrad_2018_extract_Hannover.tif")
 # plot(cop_hannover)
 
 bkfifty_poly$mean_versiegelung <- exact_extract(cop_hannover, bkfifty_poly, 'mean')
@@ -60,15 +60,15 @@ ggplot(bkfifty_poly_union, aes(fill = versiegelung_class)) +
 library(readxl)
 library(dplyr)
 library(ggplot2)
-verschlämmung <- read_excel("~/Downloads/Marco/Sachdaten_Verschlämmung.xlsx") %>% 
+verschlämmung <- read_excel("Sachdaten_Verschlämmung.xlsx") %>% 
   filter(OTIEF == 0)
 
-verschla <- read_excel("~/Downloads/Marco/Sachdaten_Verschlämmung.xlsx", 
+verschla <- read_excel("Sachdaten_Verschlämmung.xlsx", 
                                        sheet = "VERSCHLA")
 
 sachdaten <- left_join(verschlämmung, verschla, "HNBOD")
 
-peine <- st_read("~/Downloads/Marco/BK50_Peine.shp")
+peine <- st_read("BK50_Peine.shp")
 
 peine_verschlämmung <- left_join(peine, sachdaten, by = c("OBJECTID" = "FL_NR"))
 
@@ -77,3 +77,31 @@ ggplot(peine_verschlämmung, aes(fill = STUFE)) +
   scale_fill_viridis_c(option = "E", na.value="transparent") +
   coord_sf(crs = "EPSG:4326") +
   theme_minimal()
+
+
+# Gabi ----
+library(terra)
+library(tidyverse)
+elevation_raster <- rast(system.file("ex/elev.tif", package="terra"))
+elevation_df <- as.data.frame(elevation_raster)
+elevation_df$group <- 1 
+
+ggplot(elevation_df, aes(x = group, y = elevation)) +
+  geom_boxplot() +
+  stat_summary(fun=mean, geom="point", size=4, color="red", fill="red") +
+  theme_minimal()
+
+# Lena ----
+library(readxl)
+library(dplyr)
+lena_df <- read_excel("handson/data/Beispieldaten.xlsx")
+
+lena_df %>% 
+  group_by(GWK) %>% 
+  summarise(mean_wert_1 = mean(Wert1, na.rm = TRUE),
+            mean_wert_2 = mean(Wert2, na.rm = TRUE),
+            mean_wert_3 = mean(Wert3, na.rm = TRUE))
+
+# Tina ----
+#load("/Users/marco/Downloads/MKWDv_test.RData")
+
