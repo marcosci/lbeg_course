@@ -45,6 +45,33 @@ plot(st_geometry(us_route))
 # Verbindung schließen:
 postgresqlCloseConnection(conn)
 
+# LBEG Microsoft SQL Server ---------------------------------------------
+library(rgdal)
+library(sf)
+
+# connect NIBIS_BODENKARTEN
+dsn_NIBIS_BODENKARTEN <- "MSSQL:server=SQLSDEL1;database=NIBIS_BODENKARTEN;driver={SQL Server};trusted_connection=Yes"
+ogrListLayers(dsn_NIBIS_BODENKARTEN)
+
+bk50         <- st_as_sf(readOGR(dsn = dsn_NIBIS_BODENKARTEN, layer = "BK50_PLY_SHAPE"))
+buek50       <- st_as_sf(readOGR(dsn = dsn_NIBIS_BODENKARTEN, layer = "BUEK50_PLY_SHAPE"))
+
+# connect NIBIS_KLIMA
+dsn_NIBIS_KLIMA <- "MSSQL:server=SQLSDEL1;database=NIBIS_KLIMA;driver={SQL Server};trusted_connection=Yes"
+ogrListLayers(dsn_NIBIS_KLIMA)
+
+DWD_STATIONEN_NDS         <- st_as_sf(readOGR(dsn = dsn_NIBIS_KLIMA, layer = "dbo.DWD_STATIONEN_NDS"))
+st_crs(DWD_STATIONEN_NDS) <- 4647
+DWD_STATIONEN_NDS         <- st_transform(DWD_STATIONEN_NDS, "EPSG:4647")
+DWD_STATIONEN_NDS_wgs84   <- st_transform(DWD_STATIONEN_NDS, "EPSG:4326")
+
+RASTER_1000_LBEG_KLIMAWERTE_1961_1990         <- st_as_sf(readOGR(dsn = dsn_NIBIS_KLIMA, layer ="dbo.RASTER_1000_LBEG_KLIMAWERTE_1961_1990"))
+st_crs(RASTER_1000_LBEG_KLIMAWERTE_1961_1990) <- 4647
+RASTER_1000_LBEG_KLIMAWERTE_1961_1990         <- st_transform(RASTER_1000_LBEG_KLIMAWERTE_1961_1990, "EPSG:4647")
+RASTER_1000_LBEG_KLIMAWERTE_1961_1990_wgs84   <- st_transform(RASTER_1000_LBEG_KLIMAWERTE_1961_1990, "EPSG:4326")
+
+plot(RASTER_1000_LBEG_KLIMAWERTE_1961_1990_wgs84[c("EVAPOTRANSPIRATION_WINTER_MM_HYDROLOGISCHES_JAHR","NIEDERSCHLAG_JAHR_MM_HYDROLOGISCHES_JAHR")])
+
 # QGIS ------------------------------------------------------------------
 library(qgisprocess)
 library(terra)
