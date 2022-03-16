@@ -2,9 +2,13 @@ library(terra)
 # Lies die Datei raster/nlcd.tif aus dem Paket spDataLarge ein. 
 # Welche Art von Informationen kannst du über die Eigenschaften dieser Datei erhalten?
 nlcd_file = system.file("raster/nlcd.tif", package = "spDataLarge")
-"data/dgm.tif"
 nlcd_rast = rast(nlcd_file)
 nlcd_rast
+
+mean(nlcd_rast[])
+mean(values(nlcd_rast))
+
+global(nlcd_rast, mean)
 
 nlyr(nlcd_rast)
 res(nlcd_rast)
@@ -14,7 +18,6 @@ plot(nlcd_rast)
 
 # Erstelle ein neues Raster mit neun Zeilen und Spalten und einer Auflösung von 0,5 Dezimalgrad (WGS84). 
 # Fülle es mit Zufallszahlen. Extrahiere die Werte der vier Eckzellen.
-install.packages("spDataLarge", repos = "https://geocompr.r-universe.dev")
 
 # Plotte ein Histogramm und Boxplot der Datei dem.tif aus dem Paket spDataLarge 
 # (system.file("raster/dem.tif", package = "spDataLarge")).
@@ -22,6 +25,8 @@ install.packages("spDataLarge", repos = "https://geocompr.r-universe.dev")
 # NDVI berechnen
 multi_raster_file <- system.file("raster/landsat.tif", package = "spDataLarge")
 multi_rast <- rast(multi_raster_file)
+
+global(multi_rast, mean)
 
 ndvi_fun <- function(nir, red){
   (nir - red) / (nir + red)
@@ -84,12 +89,22 @@ nlyr(nlcd)
 
 r <- rast(nrow = 9,
          ncol = 9, 
-         res = 0.5, 
          xmin = 0, 
-         xmax = 4.5, 
+         xmax = 9, 
          ymin = 0, 
-         ymax = 4.5, 
+         ymax = 9,
          vals = rnorm(81))
+
+r[] <- rnorm(81)
+values(r) <- rnorm(81)
+
+
+
+
+
+
+
+
 
 # using cell IDs
 r[c(1, 9, 81 - 9 + 1, 81)]

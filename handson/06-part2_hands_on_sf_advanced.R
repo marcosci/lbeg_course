@@ -61,6 +61,8 @@ seismic <- seismic %>%
   mutate(ValueRange_Factor = factor(ValueRange,
                              levels = c("< 1","1 - 2","2 - 5","5 - 10","10 - 14")))
 
+#as_tibble(st_drop_geometry(seismic))
+
 # make a map of the annual risk of experiencing a damaging quake in the continental US
 p1 <- ggplot() +
   geom_sf(data = seismic,
@@ -150,6 +152,9 @@ ggplot(germany) +
   geom_sf(data = bw_cent, color = "coral") +
   geom_sf(data = ger_cent, color = "purple") +
   theme_minimal()
+
+
+plot(st_geometry(germany_bor))
 
 germany_bor <- st_cast(germany, "MULTILINESTRING")
 germany_bor %>% 

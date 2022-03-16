@@ -3,8 +3,8 @@
 #### 
 
 ### Kurzer Exkurs: Eigene Funktionen ----
-minus_ten <- function(input, input2) {
-  output <- input - 10
+add_ten <- function(input, input2) {
+  output <- input + 10
   return(output)
 }
 
@@ -34,7 +34,17 @@ map_dbl(.x = c(1, 4, 7),
         .f = add_ten)
 
 # Glücklicherweise müssen wir nicht alles ausschreiben:
-map_dbl(c(1, 4, 7), add_ten)
+library(terra)
+
+raster_index <- seq_len(nlyr(multi_rast))
+
+raster_mean <- map_dbl(raster_index, function(index){
+  
+  raster <- multi_rast[[index]]
+  raster_values <- values(raster)
+  mean(raster_values)
+  
+})
 
 # Egal welche Datenstruktur wir map übergeben, wir bekommen eine Liste zurück:
 map_dbl(list(1, 4, 7), add_ten)
@@ -78,27 +88,3 @@ sw_people[1]
 # Auf wie vielen Schiffen war jeder der Charaktere?
 map(sw_people, ~ length(.x$starships))
 
-# Wir benennen jedes Listenelement nach seinem Charakter
-sw_people <- sw_people %>% set_names(map_chr(sw_people, "name"))
-
-# ... und wiederholen:
-map(sw_people, ~ length(.x[["starships"]]))
-map_int(sw_people, ~ length(.x[["starships"]]))
-
-# Welche Haarfarbe hat jeder Charakter?
-map(sw_people, ~ .x[["hair_color"]])
-map_chr(sw_people, ~ .x[["hair_color"]]) 
-
-# Ist der Charakter männlich?
-map(sw_people, ~ .x[["gender"]] == "male")
-map_lgl(sw_people, ~ .x[["gender"]] == "male") 
-
-# Wie viel wiegt jeder Charakter?
-map(sw_people, ~ .x[["mass"]])
-map_dbl(sw_people, ~ .x[["mass"]])
-
-# Welcher der Star Wars Filme hat die meisten Charaktere?
-map(sw_films, "characters") %>%
-  map_int(length) %>%
-  set_names(map_chr(sw_films, "title")) %>%
-  sort()

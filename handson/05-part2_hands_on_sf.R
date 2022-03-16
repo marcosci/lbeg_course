@@ -1,5 +1,4 @@
 library(sf)
-
 # sfg - simple feature geometries
 
 ## Wir erstellen einen einfachen Punkt:
@@ -69,7 +68,8 @@ st_coordinates(layer)
 # Daten einlesen
 
 ## Rohdaten: Wir haben Niederschlagsdaten, die geographisch verortet sind:
-rainfall <- read.csv("data/rainfall.csv")
+library(readr)
+rainfall <- read_csv("data/rainfall.csv")
 rainfall
 
 ## Mit st_as_sf wandeln wir den data.frame in ein sf Objekt um
@@ -79,7 +79,7 @@ rainfall
 ### crs : Das CRS (NA falls nicht speziell gesetzt)
 rainfall_sf <- st_as_sf(rainfall, coords = c("x_utm", "y_utm"), crs = 32636) # https://epsg.io/32636
 
-mapview(rainfall_sf, zcol = "altitude")
+mapview(rainfall_sf, zcol = "dec")
 
 ## Bounding box
 st_bbox(rainfall_sf)
@@ -116,7 +116,6 @@ plot(st_geometry(county), border = "grey")
 plot(st_geometry(airports), col = "red", add = TRUE)
 
 # CRS
-
 ## sf Objekte werden mit einem EPSG Code umtransformiert:
 ### EPSG:2163 - US National Atlas Equal Area (https://epsg.io/2163)
 county_reprojected <- st_transform(county, 2163) 
@@ -127,7 +126,7 @@ par(mfrow=c(1,2))
 plot(st_geometry(county), border = "grey")
 
 # Exportieren von sf Objekten
-st_write(rainfall, "rainfall_pnt.shp")
+st_write(rainfall_sf, "rainfall_pnt.geojson")
 
 plot(st_geometry(airports), col = "red", add = TRUE)
 

@@ -30,12 +30,18 @@ ggplot(mpg, aes(displ, hwy)) +
   geom_point()
 
 # geom_line.. sinnvoll?
-ggplot(mpg, aes(displ, hwy)) + 
+ggplot(mpg, aes(displ, hwy)) +
   geom_line()
+
+p <- p + 
+  geom_point()
+
+p
 
 # geom_line
 ggplot(economics, aes(date, unemploy)) + 
-  geom_line()
+  geom_line() +
+  theme_minimal()
 
 # geom_bar() setzt die Höhe der Balken proportional zur Anzahl der Fälle in jeder Gruppe.
 ggplot(mpg, aes(displ, hwy)) + 
@@ -61,7 +67,7 @@ ggplot(mpg) +
 
 # geom_col benutzt stat = "identity" als default 
 ggplot(mpg, aes(class, hwy)) + 
-  geom_col()
+  geom_col() 
 
 # geom_boxplot
 ggplot(mpg, aes(class, hwy)) +
@@ -134,7 +140,7 @@ ggplot(mpg, aes(displ, hwy)) +
   geom_point(size= 5, alpha = 0.5)
 
 # Alpha innerhalb der der Daten 
-ggplot(mpg, aes(displ, hwy, alpha = class)) + 
+ggplot(mpg, aes(x = displ, y = hwy, alpha = class)) + 
   geom_point()
 
 # Formen
@@ -146,7 +152,7 @@ ggplot(mpg, aes(displ, hwy, shape = class)) +
 
 # Farbe pro Klasse
 ggplot(mpg, aes(displ, hwy, color = class, shape = class)) + 
-  geom_point(size = 6)
+  geom_point(size = 2) 
 
 # Farbe für alle Daten
 ggplot(mpg, aes(displ, hwy, color = "red")) + 
@@ -165,14 +171,14 @@ ggplot(mpg, aes(displ, hwy)) +
 # 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
 
 ggplot(economics, aes(date, unemploy)) + 
-  geom_line(linetype = "dotdash")
+  geom_line(linetype = 6)
 
 
 # geom_col modifikationen
 # width // alpha // colour // fill // group // linetype // size // 
 
 ggplot(mpg, aes(class, hwy)) + 
-  geom_col(width = .5)
+  geom_col(width = 1.1)
 
 # Multiple geoms in einem Plot --------------------------------------------
 ggplot(mpg, aes(displ, hwy)) + 
@@ -194,14 +200,14 @@ library(patchwork)
 p1 <- ggplot(mtcars) + geom_point(aes(mpg, disp))
 p2 <- ggplot(mtcars) + geom_boxplot(aes(gear, disp, group = gear))
 
-p1 + p2
+p1 / p2
 
 p3 <- ggplot(mtcars) + geom_smooth(aes(disp, qsec))
 p4 <- ggplot(mtcars) + geom_bar(aes(carb))
 
 p1 + p2 + p3 + p4
 
-p1 + p2 + p3 + p4 + plot_annotation(tag_levels = 'A')
+p1 + p2 + p3 + p4 + plot_annotation(tag_levels = '1')
 
 (p1 | p2 | p3) /
   p4

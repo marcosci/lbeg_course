@@ -12,10 +12,15 @@ library(rdwd)
 library(leaflet)
 library(DT)
 library(sf)
+library(h3)
 library(dplyr)
-
 data(geoIndex)  
 dwd_sf <- st_as_sf(geoIndex, coords = c("lon", "lat")) 
+h3_index <- geo_to_h3(dwd_sf, res = 4)
+tbl <- table(h3_index) %>%
+  tibble::as_tibble()
+hexagons <- h3_to_geo_boundary_sf(tbl$h3_index) %>%
+  dplyr::mutate(index = tbl$h3_index, Stationen = tbl$n)
 ```
 
 Column {data-width=650}
@@ -28,4 +33,33 @@ leaflet(dwd_sf) %>% addTiles() %>%
         addCircles(radius=900, stroke=F, color=~col) %>%
         addCircleMarkers(popup=~display, stroke=F, color=~col) %>% 
         addMeasure()
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+pal <- colorBin("YlOrRd", domain = hexagons$Stationen)
+map <- leaflet(data = hexagons, width = "100%") %>%
+  addPolygons(
+    weight = 2,
+    color = "white",
+    fillColor = ~ pal(Stationen),
+    fillOpacity = 0.8,
+    label = ~ sprintf("%i Stationen (%s)", Stationen, index)
+  )
+map
+```
+
+### Chart C
+
+```{r}
+DT::datatable(st_drop_geometry(dwd_sf) %>% select(-display),
+    rownames = FALSE,
+    style = "bootstrap",
+    class = "compact",
+    width = "100%"
+)
 ```
